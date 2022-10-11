@@ -1,0 +1,100 @@
+@extends('admin.layouts.app')
+
+@section('navigation')
+    @include('admin.navigation')
+@endsection
+
+@section('content')
+        {!! Form::open(['route' => ['hotcontacts.update',$entity->id], 'method'=> 'PUT','autocomplete' => 'off']) !!}
+        {{ Form::hidden('redirects_to', Session::get('backUrl')) }}
+        <div id="top-wrapper" >
+            <div class="container-fluid">
+            <div  class="col-xs-12">
+                <h1 class="page-header">Edit {{$entity->firm_name}}
+                    <div class="pull-right">
+                        <button class="btn btn-success btn-save" type="submit"> <i class="fa fa-floppy-o"></i> Save</button>
+                        <a class="btn btn-danger " href="{{  str_contains(Session::get('backUrl'),'#collapse') ? Session::get('backUrl') : Session::get('backUrl'). "#collapse" . $entity->id}}"><i class="fa fa-times-circle"></i> Cancel</a> &nbsp;&nbsp;
+                    </div>
+                </h1>       
+            </div>
+            </div>
+        </div>
+            <div id="page-wrapper">
+            
+            <div class="container-fluid">
+                
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <div class="row">
+                  
+                    
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Firm Info
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <label>Firm Name:</label>
+                                    <input name="firm_name"  value="{{ old("firm_name",$entity->firm_name)}}" class="form-control" data-toggle="tooltip" data-placement="top" title="">
+                                </div>
+                                
+                                </div>
+                               
+                                <div class="row">
+                                
+                                <div class="col-md-12 form-group">
+                                    <label>Default Type:</label>
+                                    {!!  Form::select('latest_type',$types,old("latest_type",$entity->latest_type), ['class' => 'form-control']) !!}
+                                </div>
+                                </div>
+
+                                   
+                                <div class="col-md-12 form-group">
+                                    <label>&nbsp;</label>
+                                    <div class="checkbox checkbox-slider--b-flat pull-right">
+                                        <label>
+                                        <input name="update_all" type="checkbox" ><span>Update Linked contacts</span>
+                                        </label>
+                                    </div>
+                                </div>    
+                                  
+                                
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+                <!-- /.row -->
+         
+               
+            </div>
+            <!-- /.container-fluid -->
+            
+        </div>
+    {!! Form::close() !!}
+@endsection
+
+@section('scripts')
+<script>
+$('.btn-save').click(function(){
+    $('.btn-save').addClass("disabled");
+    $('.btn-save').css('pointer-events','none');
+});      
+    
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+    
+  
+})
+</script>
+    
+@endsection

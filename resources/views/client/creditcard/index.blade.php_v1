@@ -1,0 +1,416 @@
+@extends('client.layouts.app')
+
+@section('css')
+<link href="{{ asset('/vendor/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ asset('/vendor/select2/css/select2-bootstrap.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ asset('/vendor/datepicker/css/bootstrap-datepicker3.min.css') }}" rel="stylesheet" type="text/css">
+<style>
+    .table > tbody > tr > .no-line {
+      border-top: none;
+  }
+
+  .table > thead > tr > .no-line {
+      border-bottom: none;
+  }
+
+  .table > tbody > tr > .thick-line {
+      border-top: 2px solid;
+  }
+</style>
+
+@endsection
+
+@section('navigation')
+    @include('client.navigation')
+@endsection
+
+@section('content')
+    
+        <div id="top-wrapper" >
+            <div class="container-fluid">
+            <div  class="col-xs-12">
+                <h1 class="page-header">
+                    <h1 class="page-header">Change Credit Card
+                        
+                    <div class="pull-right">
+
+                    </div>
+                       
+                </h1> 
+                    
+                </h1>       
+            </div>
+            </div>
+        </div>
+            <div id="page-wrapper">
+            
+            <div class="container-fluid">
+                
+                @if (count($errors) > 0)
+                    <div class="alert alert-danger">            
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                {!! Form::open(['route' => 'client.creditcard.remove', 'class'=>'form-inline'])!!}
+                @if(strlen(Auth::user()->client->payeezy_value) == 0)
+                 <div class ="col-xs-4">
+                     <h4><i class="fa fa-lock"></i> You are safe, We take privacy very seriously<br> <small>We accept:</small></h4>
+                        <img  class="img-responsive col-xs-12 " src="{{ asset('/images/cclogos.jpg') }}" alt=""/>
+                        <p>&nbsp;</p>
+                        <p>Your credit card information   will never be stored on our servers, this form will be processed through a secure channel to Payeezy 
+                            for payment processing and it will return a token for further payment processing.</p>
+                        <img  class="img-responsive col-xs-12 " src="{{ asset('/images/payeezylogo.png') }}" alt=""/>
+                             
+
+                    </div>
+
+               
+                @else
+                <div class ="col-xs-4">
+                    <h4><i class="fa fa-credit-card"></i> We have a token on file corresponding to the following Information:</h4>
+                    <p> 
+                        <label>Card Type: </label> {{ Auth::user()->client->payeezy_type }} <br>
+                        <label>Card Holder Name: </label> {{ Auth::user()->client->payeezy_cardholder_name }} <br>
+                        <label>Card Expiration Date: </label> {{ strftime("%b",mktime(0,0,0,substr(Auth::user()->client->payeezy_exp_date,0,2))) }} - {{substr(Auth::user()->client->payeezy_exp_date,2,2) }} <br>
+                     <h4><i class="fa fa-lock"></i> New Credit Card Information</h4>
+
+                        <p>We will send your Credit Card Information through a secure channel to 
+                            retrieve a token from our payment gateway, that we will use for future payments.</p>
+                        <img  class="img-responsive col-xs-12 " src="{{ asset('/images/payeezylogo.png') }}" alt=""/>
+                     
+                            <div class="">
+                                <button type="submit" class=" btn btn-danger btn-block  form-control">Remove Card</button>
+                            </div>
+                     
+                </div> 
+                
+                @endif
+                {!! Form::close() !!}
+                <div class="col-xs-8">
+                   
+                    <form method="POST" name="payment-form" id="payment-form">
+                   {{ Form::hidden('invoice_id', 0) }}
+                    {{ Form::hidden('apikey', $api_key, ['id'=>'apikey']) }}
+                    {{ Form::hidden('apisecret', $api_secret, ['id'=>'apisecret']) }}
+                    {{ Form::hidden('js_security_key', $js_security_key, ['id'=>'js_security_key']) }}
+
+                    {{ Form::hidden('ta_token', $ta_token, ['id'=>'ta_token','payeezy-data'=>'ta_token'])}}
+                    {{ Form::hidden('currency', 'USD',['id'=>'currency','payeezy-data'=>'currency'])}}
+                    {{ Form::hidden('auth', 'true',['id'=>'auth','payeezy-data'=>'auth'])}}
+                    {{ Form::hidden('cc_token', '')}}
+                  
+                        <div id="payment-errors" class="alert alert-danger hidden" >
+                                <span ></span>
+                        </div>
+                        <div id="response_msg" class="alert alert-success hidden">
+                                <span></span>
+                        </div>
+                       <div id="response_note" class="alert alert-info hidden">
+                                <span></span>
+                        </div>
+                        <div id="someHiddenDiv" style="display: none; color: red">Requesting
+                                Payeezy token...</div>
+                    
+                        <div class="row">
+                            <div class="col-xs-12 form-group">
+                                <label>Card Type :</label>
+                               <select payeezy-data="card_type" class="form-control">
+                                    <option value="visa">Visa</option>
+                                    <option value="mastercard">Master Card</option>
+                                    <option value="American Express">American Express</option>
+                                    <option value="discover">Discover</option>
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-xs-12 form-group">
+                                <label>Cardholder Name :</label>
+                                <input type="text" payeezy-data="cardholder_name" class="form-control" value="" />
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-xs-12 form-group">
+                                <label>Card Number :</label>
+                                <input type="text" payeezy-data="cc_number" class="form-control"  value="" />
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-xs-12 form-group">
+                                <label>CVV Code :</label>
+                                <input type="text" payeezy-data="cvv_code"  class="form-control" />
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <div class="col-xs-4 form-group">
+                                <label>Expiry Date :</label>
+                                <select payeezy-data="exp_month" class=" form-control">
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12" selected>12</option>
+                                </select> 
+                            </div>
+                            <div class="col-xs-4 form-group">
+                                <label>&nbsp;</label>
+                                <select payeezy-data="exp_year" class=" form-control">
+                                   
+                                    <option value="18">2018</option>
+                                    <option value="19">2019</option>
+                                    <option value="20">2020</option>
+                                    <option value="21">2021</option>
+                                    <option value="22">2022</option>
+                                    <option value="23">2023</option>
+                                    <option value="24">2024</option>
+                                    <option value="25">2025</option>
+                                    <option value="26">2026</option>
+                                    <option value="27">2027</option>
+                                    <option value="28">2028</option>
+                                    <option value="29">2029</option>
+                                    <option value="30">2030</option>
+                                    <option value="31">2031</option>
+                                    <option value="32">2032</option>
+                                    <option value="33">2033</option>
+                                    <option value="34">2034</option>
+                                    <option value="35">2035</option>
+                                    <option value="36">2036</option>
+                                    <option value="37">2037</option>
+                                    <option value="38">2038</option>
+                                    <option value="39">2039</option>
+                                    <option value="40">2040</option>
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                        <div id="generate-token" class="col-xs-12 ">
+                            <div class="col-xs-4 pull-right">
+                                <div class="">
+                                <button type="submit" class=" btn btn-success btn-block  form-control">Add Card</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+            <div class="container-fluid">
+                <div class ="col-xs-12">
+                    <center><h3 class="print_invoicestitle"> Cards List</h3></center>    
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th width="15%">Card Type</th>
+                                    <th width="50%">Card Name</th>
+                                    <th width="10%">Expiration Date</th>
+                                    <th width="25%">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @if(strlen(Auth::user()->client->payeezy_value) > 0)
+                                <tr>
+                                    <td>{{Auth::user()->client->payeezy_type}}</td>
+                                    <td>{{Auth::user()->client->payeezy_cardholder_name}}</td>
+                                    <td> {{ strftime("%b",mktime(0,0,0,substr(Auth::user()->client->payeezy_exp_date,0,2))) }} - {{substr(Auth::user()->client->payeezy_exp_date,2,2) }}</td>
+                                    <td>
+                                        <button type="submit" class=" btn form-control" disabled>Current Card to use</button>
+                                         
+                                        {!! Form::open(['route' => 'client.creditcard.remove', 'class'=>'form-inline '])!!}
+                                        <button type="submit" class="btn btn-danger  form-group" style="width: 100% !important">Remove Card</button>
+                                        {!! Form::close() !!}
+                                        
+                                    </td>
+                                </tr>
+                            @endif
+                            @foreach($cardslist as $card)
+                                <tr>
+                                    <td>{{$card->payeezy_type}}</td>
+                                    <td>{{$card->payeezy_cardholder_name}}</td>
+                                    <td> {{ strftime("%b",mktime(0,0,0,substr($card->payeezy_exp_date,0,2))) }} - {{substr($card->payeezy_exp_date,2,2) }}</td>
+                                     
+                                    <td>
+                                        
+                                        <a href="{{route('client.creditcard.active_card')}}?id={{$card->id}}" class=" btn btn-success ">Use this Card</a>
+
+                                        <a href="{{route('client.creditcard.remove_card')}}?id={{$card->id}}" class=" btn btn-danger">Remove Card</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+
+                            </tbody>
+                        </table>
+                </div>
+            </div>                
+            <!-- /.container-fluid -->
+            
+        </div>
+   
+@endsection
+
+@section('scripts')
+<script src="{{ asset('/vendor/select2/js/select2.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/vendor/datepicker/js/bootstrap-datepicker.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/vendor/payeezy/js/payeezy_us_v5.1.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/vendor/bootstrap-filestyle/js/bootstrap-filestyle.min.js') }}" type="text/javascript"></script>
+<script>
+$.fn.select2.defaults.set("theme", "bootstrap");
+var payeezy_url ='{{ $payeezy_url}}';
+$(function () {
+$(".message-box").fadeTo(6000, 500).slideUp(500, function(){
+        $(".message-box").slideUp(500).remove();
+    });
+    $('[data-toggle="tooltip"]').tooltip()
+    $('.date-picker').datepicker();
+    $(":file").filestyle();
+ 
+
+    <!-- Building JSON resquest and submitting request to Payeezy sever -->
+
+        $('#payment-form').submit(function(e) {
+                    $('#response_msg').addClass('hidden');
+                    $('#response_note').addClass('hidden');
+                    $('#payment-errors').addClass('hidden');
+                    $('#response_msg > span').html('');
+                    $('#response_note  > span').html('');
+                    $('#payment-errors > span').html('');
+
+                    var $form = $(this);
+                    $form.find('button').prop('disabled', true);
+                    if (! $('input[name="donottokenize"]').length) {
+                        
+                        var apiKey = document.getElementById("apikey").value;
+                        var js_security_key = document.getElementById("js_security_key").value;
+                        var auth = document.getElementById("auth").value;
+                        var ta_token = document.getElementById("ta_token").value;
+                        <!-- Setting Key parameters for Payeezy gettoken method --> 
+                        var currency=document.getElementById("currency").value;//4242424242424242  123
+                        Payeezy.setApiKey(apiKey);
+                        Payeezy.setJs_Security_Key(js_security_key);
+                        Payeezy.setTa_token(ta_token);
+                        Payeezy.setAuth(auth);
+                        Payeezy.setCurrency(currency);
+                        Payeezy.createToken(responseHandler);
+                        $('#someHiddenDiv').show();
+                    } else {
+                        
+                        var $form = $('#payment-form');
+                       
+                        var serializedData = $form.serializeArray();
+                        $('#response_msg > span').html('New Token Retrieved, Updating');
+                        $('#response_msg').removeClass('hidden');
+                        
+                        setTimeout(
+                            function() 
+                            {
+                              //do something special
+                            }, 3000);
+                        $.ajax({
+                            url: "{{ url('client/creditcard/tokenize') }}",
+                            type: "post",
+                            data: $.param(serializedData),
+                            success: function(data) {
+                                      var obj = jQuery.parseJSON(data);
+                                      
+                                      window.location.replace('{{ url('/client/creditcard/') }}');
+                                     },
+                            error: function() {
+                                $('#payment-errors > span').html('We had problems Submitting your payment please try again, or Contact us. ');
+                                 $('#payment-errors').removeClass('hidden');
+                                 $form.find('button').prop('disabled', false);
+                            }
+                        });
+                         
+                    }
+                    return false;
+                });
+   
+ 
+});
+
+
+ var responseHandler = function(status, response) {
+        var $form = $('#payment-form');
+        $('#someHiddenDiv').hide();
+        if (status != 201) {
+             if (response.error && status != 400) {
+               var error = response["error"];
+               var errormsg = error["messages"];
+               var errorcode = JSON.stringify(errormsg[0].code, null, 4);
+               var errorMessages = JSON.stringify(errormsg[0].description, null, 4); 
+               $('#payment-errors > span').html( 'Error Code:' + errorcode + ', Error Messages:'
+                                + errorMessages);
+             
+                    $('#payment-errors').removeClass('hidden');
+            }
+            if (status == 400 || status == 500 || status == 401) {
+               $('#payment-errors  > span').html('');
+               var errormsg = response.Error.messages;
+               var errorMessages = "";
+               for(var i in errormsg){
+                var ecode = errormsg[i].code;
+                var eMessage = errormsg[i].description;
+                errorMessages = errorMessages + 'Error Code:' + ecode + ', Error Messages:'
+                                + eMessage;
+                }
+           
+               $('#payment-errors  > span').html( errorMessages);
+               $('#payment-errors').removeClass('hidden');
+            }
+
+            $form.find('button').prop('disabled', false);
+        } else {
+            $('#payment-errors  > span').html('');
+            console.log(response.token);
+            var result = response.token.value;
+            $('#cc_token').val(result);
+            var serializedData = $form.serializeArray();
+             $('#response_msg > span').html('New Token Retrieved, Updating');
+                        $('#response_msg').removeClass('hidden');
+                         setTimeout(
+                            function() 
+                            {
+                              //do something special
+                            }, 3000);
+            serializedData.push({
+                name: 'token',
+                value: JSON.stringify(response.token)
+            });
+            $.ajax({
+                url: "{{  url('client/creditcard/tokenize') }}",
+                type: "get",
+                data: $.param(serializedData),
+                success: function(data) {
+                    var obj = jQuery.parseJSON(data);
+                    window.location.replace('{{  url('/client/creditcard/') }}');
+                  },
+                error: function() {
+                    $('#payment-errors > span').html('We had problems Submitting your payment please try again, or Contact us. ');
+                     $('#payment-errors').removeClass('hidden');
+                     $form.find('button').prop('disabled', false);
+                }
+            });
+            
+        }
+
+    };
+</script>
+    
+@endsection
