@@ -166,7 +166,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Laravel\Tinker\TinkerServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Laravel\Scout\ScoutServiceProvider::class,
         DamianTW\MySQLScout\Providers\MySQLScoutServiceProvider::class,
