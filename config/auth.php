@@ -63,12 +63,11 @@ return [
     | Supported: "database", "eloquent"
     |
     */
-    'model' => 'App\User',
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => 'App\User',
-            'table' => 'users',
+            'model' => App\User::class,
         ],
 
         // 'users' => [
