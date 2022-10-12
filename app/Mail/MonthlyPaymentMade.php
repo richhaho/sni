@@ -3,15 +3,18 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class MonthlyPaymentMade extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
     public $payment;
+
     public $client;
+
     public $type;
 
     /**
@@ -19,9 +22,9 @@ class MonthlyPaymentMade extends Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($payment, $client, $type = "mornitoring users")
+    public function __construct($payment, $client, $type = 'mornitoring users')
     {
-        $this->payment =$payment;
+        $this->payment = $payment;
         $this->client = $client;
         $this->type = $type;
 
@@ -29,10 +32,9 @@ class MonthlyPaymentMade extends Mailable implements ShouldQueue
         if (isset($from->from_email)) {
             $this->from[] = [
                 'address' => $from->from_email,
-                'name' => $from->from_name
+                'name' => $from->from_name,
             ];
         }
-
     }
 
     /**

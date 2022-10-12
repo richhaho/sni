@@ -13,7 +13,7 @@ class ViewComposerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-          $this->composeNavigation();
+        $this->composeNavigation();
     }
 
     /**
@@ -25,11 +25,9 @@ class ViewComposerServiceProvider extends ServiceProvider
     {
         //
     }
-    
-    private function composeNavigation() {
-        view()->composer(['admin.navigation','client.navigation','researcher.navigation'],'App\Http\Composers\NavigationComposer@notifications');
-       
-    }
-    
 
+    private function composeNavigation()
+    {
+        view()->composer(['admin.navigation', 'client.navigation', 'researcher.navigation'], 'App\Http\Composers\NavigationComposer@notifications');
+    }
 }

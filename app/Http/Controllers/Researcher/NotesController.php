@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Session;
-use Auth;
 use App\Job;
-use App\WorkOrder;
 use App\Note;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Notification;
 use App\Notifications\NewJobNote;
 use App\Notifications\NewWorkNote;
-
+use App\WorkOrder;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+use Session;
 
 class NotesController extends Controller
 {
@@ -43,22 +42,18 @@ class NotesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$type,$eid)
+    public function store(Request $request, $type, $eid)
     {
-        
-        
         $this->validate($request, [
             'note' => 'required',
         ]);
-        
-        
-        
-        $note = New Note();
+
+        $note = new Note();
         $now = Carbon::now();
         $note->note_text = $request->input('note');
         $note->entered_at = $now->toDateTimeString();
         $note->entered_by = Auth::user()->id;
-        if ($type =="jobs") {
+        if ($type == 'jobs') {
             $xentity = Job::findOrFail($eid);
             $note->client_id = $xentity->client->id;
             $client = $xentity->client;
@@ -68,42 +63,39 @@ class NotesController extends Controller
             $client = $xentity->job->client;
         }
 
-
-        if($request->has('viewable')) {
+        if ($request->has('viewable')) {
             $note->viewable = 1;
-            
         } else {
             $note->viewable = 0;
         }
-        
+
         $note = $xentity->notes()->save($note);
-        
-        if($request->has('viewable')) {
+
+        if ($request->has('viewable')) {
             $note->viewable = 1;
             $data = [
-                'note' => str_limit($note->note_text,25,'...'),
-                'entered_at' =>  $note->entered_at
+                'note' => str_limit($note->note_text, 25, '...'),
+                'entered_at' => $note->entered_at,
             ];
-            if ($type =="jobs") {
-                Notification::send($client->users, new NewJobNote($note->id,$data,Auth::user()->full_name));
-                //this could be deleted when client fromn tcreated
+            if ($type == 'jobs') {
+                Notification::send($client->users, new NewJobNote($note->id, $data, Auth::user()->full_name));
+            //this could be deleted when client fromn tcreated
                  //Notification::send(Auth::user(), new NewJobNote($note->id,$data,Auth::user()->full_name));
                 //
             } else {
-                Notification::send($client->users, new NewWorkNote($note->id,$data,Auth::user()->full_name));
+                Notification::send($client->users, new NewWorkNote($note->id, $data, Auth::user()->full_name));
                 //this could be deleted when client fromn tcreated
                  //Notification::send(Auth::user(), new NewWorkNote($note->id,$data,Auth::user()->full_name));
                 //
             }
         }
         Session::flash('message', 'New note added');
-    
-        if ($type =="jobs") {
-            return redirect()->to(route('jobs.edit',$eid) .'?#notes');
-        } else{
-            return redirect()->to(route('workorders.edit',$eid) .'?#notes');
+
+        if ($type == 'jobs') {
+            return redirect()->to(route('jobs.edit', $eid).'?#notes');
+        } else {
+            return redirect()->to(route('workorders.edit', $eid).'?#notes');
         }
-        
     }
 
     /**
@@ -123,13 +115,13 @@ class NotesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($type,$eid,$id)
+    public function edit($type, $eid, $id)
     {
-       $note = Note::findOrFail($id);
-       if ($type =="jobs") {
-            return redirect()->to(route('jobs.edit',$eid) .'?#notes')->with('note', $note);
-        } else{
-            return redirect()->to(route('workorders.edit',$eid) .'?#notes')->with('note', $note);
+        $note = Note::findOrFail($id);
+        if ($type == 'jobs') {
+            return redirect()->to(route('jobs.edit', $eid).'?#notes')->with('note', $note);
+        } else {
+            return redirect()->to(route('workorders.edit', $eid).'?#notes')->with('note', $note);
         }
     }
 
@@ -140,14 +132,12 @@ class NotesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$type,$eid, $id)
+    public function update(Request $request, $type, $eid, $id)
     {
-        
-       
         $this->validate($request, [
             'note'.$id => 'required',
         ]);
-       if ($type =="jobs") {
+        if ($type == 'jobs') {
             $xentity = Job::findOrFail($eid);
             $client = $xentity->client;
         } else {
@@ -158,37 +148,35 @@ class NotesController extends Controller
         $note = Note::findOrFail($id);
         $note->note_text = $request->input('note'.$id);
         $old_viewable = $note->viewable;
-        if($request->has('viewable')) {
+        if ($request->has('viewable')) {
             $note->viewable = 1;
-            if($old_viewable == 0 ) {
+            if ($old_viewable == 0) {
                 $data = [
-                'note' => str_limit($note->note_text,25,'...'),
-                'entered_at' =>  $note->entered_at
+                    'note' => str_limit($note->note_text, 25, '...'),
+                    'entered_at' => $note->entered_at,
                 ];
-                if ($type =="jobs") {
-                    Notification::send($client->users, new NewJobNote($note->id,$data,Auth::user()->full_name));
+                if ($type == 'jobs') {
+                    Notification::send($client->users, new NewJobNote($note->id, $data, Auth::user()->full_name));
                     //this could be deleted when client fromn tcreated
-                     Notification::send(Auth::user(), new NewJobNote($note->id,$data,Auth::user()->full_name));
-                    //
+                    Notification::send(Auth::user(), new NewJobNote($note->id, $data, Auth::user()->full_name));
+                //
                 } else {
-                    Notification::send($client->users, new NewWorkNote($note->id,$data,Auth::user()->full_name));
+                    Notification::send($client->users, new NewWorkNote($note->id, $data, Auth::user()->full_name));
                     //this could be deleted when client fromn tcreated
-                     Notification::send(Auth::user(), new NewWorkNote($note->id,$data,Auth::user()->full_name));
+                    Notification::send(Auth::user(), new NewWorkNote($note->id, $data, Auth::user()->full_name));
                     //
                 }
             }
-        }  else {
+        } else {
             $note->viewable = 0;
         }
         $note->save();
         Session::flash('message', 'Note Updated');
-       
-        if ($type =="jobs") {
-          
-            return redirect()->to(route('jobs.edit',$eid) .'?#notes');
-        } else{
-           
-            return redirect()->to(route('workorders.edit',$eid) .'?#notes');
+
+        if ($type == 'jobs') {
+            return redirect()->to(route('jobs.edit', $eid).'?#notes');
+        } else {
+            return redirect()->to(route('workorders.edit', $eid).'?#notes');
         }
     }
 
@@ -198,31 +186,29 @@ class NotesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($type,$eid,$id)
+    public function destroy($type, $eid, $id)
     {
-        
         $note = Note::findOrFail($id);
         $note->delete();
-        
+
         Session::flash('message', 'Note Deleted');
-        if ($type =="jobs") {
-            return redirect()->to(route('jobs.edit',$eid) .'?#notes');
-        } else{
-            return redirect()->to(route('workorders.edit',$eid) .'?#notes');
+        if ($type == 'jobs') {
+            return redirect()->to(route('jobs.edit', $eid).'?#notes');
+        } else {
+            return redirect()->to(route('workorders.edit', $eid).'?#notes');
         }
     }
-    
-    
-     public function removenotification($id) {
+
+    public function removenotification($id)
+    {
         $user = \Auth::user();
-        $notification = $user->notifications()->where('id',$id)->first();
-        if ($notification)
-        {
+        $notification = $user->notifications()->where('id', $id)->first();
+        if ($notification) {
             $notification->delete();
+
             return 'DELETED';
+        } else {
+            return 'ERROR';
         }
-        else
-        return 'ERROR';
-     }
-             
+    }
 }

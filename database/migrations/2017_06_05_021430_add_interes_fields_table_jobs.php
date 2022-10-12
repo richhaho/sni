@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddInteresFieldsTableJobs extends Migration
 {
@@ -14,8 +14,8 @@ class AddInteresFieldsTableJobs extends Migration
     public function up()
     {
         Schema::table('jobs', function (Blueprint $table) {
-            $table->double('interest_rate', 5,2)->default(0)->after('interest_charged');
-            $table->double('interest_asof_date',15,2)->default(0)->after('interest_charged');
+            $table->double('interest_rate', 5, 2)->default(0)->after('interest_charged');
+            $table->double('interest_asof_date', 15, 2)->default(0)->after('interest_charged');
         });
     }
 
@@ -26,9 +26,9 @@ class AddInteresFieldsTableJobs extends Migration
      */
     public function down()
     {
-       Schema::table('jobs', function (Blueprint $table) {
-            $table->dropColumn('interest_rate', 5,2);
-            $table->dropColumn('interest_asof_date',15,2);
+        Schema::table('jobs', function (Blueprint $table) {
+            $table->dropColumn('interest_rate', 5, 2);
+            $table->dropColumn('interest_asof_date', 15, 2);
         });
     }
 }

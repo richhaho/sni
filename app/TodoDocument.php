@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TodoDocument extends Model
 {
-    protected $table='todo_documents';
+    protected $table = 'todo_documents';
 
     public function todo()
     {

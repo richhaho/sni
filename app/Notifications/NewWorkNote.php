@@ -1,33 +1,41 @@
 <?php
 
 namespace App\Notifications;
+
 use App\Note;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Auth;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class NewWorkNote extends Notification implements ShouldQueue
 {
     public $note_id;
+
     public $notification;
+
     public $user;
 
     public $job_number;
+
     public $job_name;
+
     public $work_number;
+
     public $note_text;
+
     public $to_researcher;
+
     use Queueable;
-   
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($note_id,$notification,$user,$job_number,$job_name,$work_number,$note_text, $to_researcher = false)
+    public function __construct($note_id, $notification, $user, $job_number, $job_name, $work_number, $note_text, $to_researcher = false)
     {
         $this->note_id = $note_id;
         $this->notification = $notification;
@@ -48,7 +56,7 @@ class NewWorkNote extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['broadcast','database','mail'];
+        return ['broadcast', 'database', 'mail'];
     }
 
     /**
@@ -68,11 +76,11 @@ class NewWorkNote extends Notification implements ShouldQueue
         }
 
         $note = Note::findOrFail($this->note_id);
-        $url = route('workorders.edit',$note->noteable->id) . '?#notes';
+        $url = route('workorders.edit', $note->noteable->id).'?#notes';
         if (Auth::user()) {
             if (Auth::user()->hasRole(['admin']) || Auth::user()->hasRole(['researcher'])) {
-                if (!$this->to_researcher) {
-                    $url = route('client.notices.edit',$note->noteable->id) . '?#notes';
+                if (! $this->to_researcher) {
+                    $url = route('client.notices.edit', $note->noteable->id).'?#notes';
                 }
             }
         }
@@ -97,28 +105,30 @@ class NewWorkNote extends Notification implements ShouldQueue
     public function toDatabase($notifiable)
     {
         $note = Note::findOrFail($this->note_id);
-        
-        $url_admin = route('workorders.edit',$note->noteable->id) . '?#notes';
-        $url_client = route('client.notices.edit',$note->noteable->id) . '?#notes';
+
+        $url_admin = route('workorders.edit', $note->noteable->id).'?#notes';
+        $url_client = route('client.notices.edit', $note->noteable->id).'?#notes';
+
         return [
             'note_id' => $this->note_id,
-            'message' =>  $this->notification,
-            'user' => $this->user ,
+            'message' => $this->notification,
+            'user' => $this->user,
             'url_admin' => $url_admin,
             'url_client' => $url_client,
         ];
     }
-    
+
     public function toBroadcast($notifiable)
     {
         $note = Note::findOrFail($this->note_id);
-        
-        $url_admin = route('workorders.edit',$note->noteable->id) . '?#notes';
-        $url_client = route('client.notices.edit',$note->noteable->id) . '?#notes';
+
+        $url_admin = route('workorders.edit', $note->noteable->id).'?#notes';
+        $url_client = route('client.notices.edit', $note->noteable->id).'?#notes';
+
         return new BroadcastMessage([
             'note_id' => $this->note_id,
-            'message' =>  $this->notification,
-            'user' => $this->user ,
+            'message' => $this->notification,
+            'user' => $this->user,
             'url_admin' => $url_admin,
             'url_client' => $url_client,
         ]);

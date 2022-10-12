@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PriceList;
-use Session;
+use Illuminate\Http\Request;
 use Response;
+use Session;
 
 class PriceListController extends Controller
 {
@@ -17,15 +17,14 @@ class PriceListController extends Controller
      */
     public function index()
     {
-        
         $list = PriceList::All();
-        
-       $data = [
+
+        $data = [
             'list' => $list,
-            
+
         ];
-                
-        return view('admin.pricelist.index',$data);
+
+        return view('admin.pricelist.index', $data);
     }
 
     /**
@@ -46,18 +45,19 @@ class PriceListController extends Controller
      */
     public function store(Request $request)
     {
-           $this->validate($request, [
+        $this->validate($request, [
             'new_description' => 'required',
             'new_price' => 'required|numeric',
         ]);
-         
+
         $item = new PriceList();
-    
+
         $item->description = $request->new_description;
         $item->price = $request->new_price;
         $item->save();
-        
-        Session::flash('message', 'Item ' . $item->description . ' successfully created.');
+
+        Session::flash('message', 'Item '.$item->description.' successfully created.');
+
         return redirect()->route('pricelist.index');
     }
 
@@ -69,12 +69,13 @@ class PriceListController extends Controller
      */
     public function show($id)
     {
-        
     }
 
-    public function itemlist(){
+    public function itemlist()
+    {
         return PriceList::get()->ToJson();
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -95,14 +96,15 @@ class PriceListController extends Controller
      */
     public function update(Request $request, $id)
     {
-         $this->validate($request, [
+        $this->validate($request, [
             'description' => 'required',
             'price' => 'required|numeric',
         ]);
         $item = PriceList::findOrFail($id);
-        $item->update($request->all());;
-        
-        Session::flash('message', 'Item ' . $item->description . ' successfully updated.');
+        $item->update($request->all());
+
+        Session::flash('message', 'Item '.$item->description.' successfully updated.');
+
         return redirect()->route('pricelist.index');
     }
 
@@ -114,12 +116,12 @@ class PriceListController extends Controller
      */
     public function destroy($id)
     {
-         $item = PriceList::findOrFail($id);
-        
+        $item = PriceList::findOrFail($id);
+
         $item->delete();
-        
-         Session::flash('message', 'Item ' .$item->description . ' successfully deleted.');
-        
+
+        Session::flash('message', 'Item '.$item->description.' successfully deleted.');
+
         return redirect()->route('pricelist.index');
     }
 
@@ -131,24 +133,24 @@ class PriceListController extends Controller
     public function download(Request $request)
     {
         $result = PriceList::all();
-        $headers = array(
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=price_list.csv",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
-        );
+        $headers = [
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=price_list.csv',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
         $columns = ['description', 'price'];
-        $callback = function() use ($result, $columns)
-        {
+        $callback = function () use ($result, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
-            foreach($result as $row) {
+            foreach ($result as $row) {
                 fputcsv($file, [$row->description, $row->price]);
             }
             fclose($file);
         };
+
         return Response::stream($callback, 200, $headers);
     }
 
@@ -160,35 +162,38 @@ class PriceListController extends Controller
     public function upload(Request $request)
     {
         $delimiter = ',';
-        $f= $request->file('csv');
-        if (!$f || $f=='') {
-            Session::flash('message','Please input csv file.');
+        $f = $request->file('csv');
+        if (! $f || $f == '') {
+            Session::flash('message', 'Please input csv file.');
+
             return redirect()->route('pricelist.index');
         }
         $header = null;
-        $data = array();
+        $data = [];
         if (($handle = fopen($f, 'r')) !== false) {
             try {
-                while (($row = fgetcsv($handle, 1000, $delimiter)) !== false)
-                {
-                    if (!$header)
+                while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
+                    if (! $header) {
                         $header = $row;
-                    else
+                    } else {
                         $data[] = array_combine($header, $row);
+                    }
                 }
                 fclose($handle);
             } catch (\Exception $e) {
-                Session::flash('message','You uploaded invalid CSV file. Please upload valid one.');
-                return redirect()->route('pricelist.index'); 
+                Session::flash('message', 'You uploaded invalid CSV file. Please upload valid one.');
+
+                return redirect()->route('pricelist.index');
             }
         }
         $invalidError = $this->checkIfValidCSV($header, $data);
         if ($invalidError) {
             Session::flash('message', $invalidError);
-            return redirect()->route('pricelist.index');    
+
+            return redirect()->route('pricelist.index');
         }
-        foreach($data as $row) {
-            $mt = PriceList::where('description',$row['description'])->first();
+        foreach ($data as $row) {
+            $mt = PriceList::where('description', $row['description'])->first();
             if (empty($mt)) {
                 $mt = PriceList::create($row);
             } else {
@@ -196,18 +201,23 @@ class PriceListController extends Controller
             }
         }
 
-        Session::flash('message','Price list Updated from uploaded csv file.');
+        Session::flash('message', 'Price list Updated from uploaded csv file.');
+
         return redirect()->route('pricelist.index');
     }
 
-    public function checkIfValidCSV($header, $data) {
+    public function checkIfValidCSV($header, $data)
+    {
         $columns = ['description', 'price'];
-        if ($columns != $header) return 'Error: CSV header does not match. Header should be description and price.';
-        foreach($data as $row) {
-            if (!is_numeric($row['price'])) {
+        if ($columns != $header) {
+            return 'Error: CSV header does not match. Header should be description and price.';
+        }
+        foreach ($data as $row) {
+            if (! is_numeric($row['price'])) {
                 return 'Error: price must be numeric value on your csv file.';
             }
         }
+
         return null;
     }
 }

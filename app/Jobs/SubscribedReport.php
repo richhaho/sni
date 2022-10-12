@@ -2,15 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Mail\SendSubscribedReport;
+use App\ReportSubscribed;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Report;
-use App\ReportSubscribed;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SendSubscribedReport;
 
 class SubscribedReport implements ShouldQueue
 {
@@ -31,26 +30,24 @@ class SubscribedReport implements ShouldQueue
      *
      * @return void
      */
-    
     public function handle()
     {
-        $nowTime=date('h:i A');
-        $day=date('l');
-        $subscribedReports=ReportSubscribed::where('weekdays', 'like', "%$day%")->where('time', $nowTime)->get();
-        foreach($subscribedReports as $subscribe) {
+        $nowTime = date('h:i A');
+        $day = date('l');
+        $subscribedReports = ReportSubscribed::where('weekdays', 'like', "%$day%")->where('time', $nowTime)->get();
+        foreach ($subscribedReports as $subscribe) {
             $emails = explode(',', $subscribe->users);
-            for ($i=0;$i<count($emails);$i++){
-                if (!email_validate($emails[$i])){
+            for ($i = 0; $i < count($emails); $i++) {
+                if (! email_validate($emails[$i])) {
                     unset($emails[$i]);
                 }
             }
             $report = $subscribe->report();
             $client_id = $subscribe->client_id;
 
-            if (count($emails)>0){
+            if (count($emails) > 0) {
                 Mail::to($emails)->send(new SendSubscribedReport($report, $client_id));
             }
         }
     }
 }
-

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property mixed $recipient_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TemplateLine whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TemplateLine whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\TemplateLine whereId($value)
@@ -31,8 +32,14 @@ use Illuminate\Database\Eloquent\Model;
 class TemplateLine extends Model
 {
     public $recipient_id = 0;
-    
-    public function getRecipientIdAttribute() { return $recipient_id; }
-    
-    public function setRecipientIdAttribute($value) { $recipient_id = $value; }
+
+    public function getRecipientIdAttribute()
+    {
+        return $recipient_id;
+    }
+
+    public function setRecipientIdAttribute($value)
+    {
+        $recipient_id = $value;
+    }
 }

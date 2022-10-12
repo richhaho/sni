@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Clients;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Job;
 use App\JobChangeOrder;
+use Illuminate\Http\Request;
+use Response;
 use Session;
 use Storage;
-use Response;
-
 
 class JobChangesController extends Controller
 {
@@ -30,7 +29,6 @@ class JobChangesController extends Controller
      */
     public function create($job_id)
     {
-       
     }
 
     /**
@@ -39,31 +37,33 @@ class JobChangesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$job_id)
+    public function store(Request $request, $job_id)
     {
         //  $this->validate($request, [
         //     'number' => 'required',
         //     'added_on' => 'required',
         //     'amount' => 'required|numeric',
         // ]);
-        if ($request['number']==null || $request['number']=="" || $request['added_on']==null || $request['added_on']=="" || $request['amount']==null || $request['amount']=="") {
+        if ($request['number'] == null || $request['number'] == '' || $request['added_on'] == null || $request['added_on'] == '' || $request['amount'] == null || $request['amount'] == '') {
             Session::flash('message', 'number, added_on and amount are required.');
-            return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+            return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
         }
 
         $f = $request->file('attached_file');
         if (isset($request['attached_file'])) {
-            $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-            $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-            if ($f->getSize()>$max_uploadfileSize){
+            $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+            $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+            if ($f->getSize() > $max_uploadfileSize) {
                 Session::flash('message', 'Attached file is too large to upload.');
-                return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+                return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
             }
         }
-        
-        $job =Job::findOrFail($job_id);
-        $this->authorize('wizard',  $job);
-        
+
+        $job = Job::findOrFail($job_id);
+        $this->authorize('wizard', $job);
+
         $change = new JobChangeOrder;
         $change->number = $request->number;
         $change->added_on = date('Y-m-d', strtotime($request->added_on));
@@ -72,17 +72,17 @@ class JobChangesController extends Controller
         $change->job_id = $job_id;
         $change->save();
         if (isset($request['attached_file'])) {
-            $xfilename = $change->id . "." . $f->guessExtension();
+            $xfilename = $change->id.'.'.$f->guessExtension();
             $xpath = 'attachments/job_changes/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $change->attached_file = $f->getClientOriginalName();
             $change->file_mime = $f->getMimeType();
             $change->file_path = $xpath.$xfilename;
             $change->save();
         }
         Session::flash('message', 'New Change Order created');
-    
-        return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
     }
 
     /**
@@ -102,12 +102,13 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($job_id,$id)
+    public function edit($job_id, $id)
     {
-        $job =Job::findOrFail($job_id);
-        $this->authorize('wizard',  $job);
+        $job = Job::findOrFail($job_id);
+        $this->authorize('wizard', $job);
         $change = JobChangeOrder::findOrFail($id);
-       return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes')->with('change', $change);
+
+        return redirect()->to(route('client.jobs.edit', $job_id).'?#changes')->with('change', $change);
     }
 
     /**
@@ -117,7 +118,7 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$job_id, $id)
+    public function update(Request $request, $job_id, $id)
     {
         $this->validate($request, [
             'number' => 'required',
@@ -126,16 +127,17 @@ class JobChangesController extends Controller
         ]);
         $f = $request->file('attached_file');
         if (isset($request['attached_file'])) {
-            $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-            $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-            if ($f->getSize()>$max_uploadfileSize){
+            $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+            $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+            if ($f->getSize() > $max_uploadfileSize) {
                 Session::flash('message', 'Attached file is too large to upload.');
-                return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+                return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
             }
         }
 
-        $job =Job::findOrFail($job_id);
-        $this->authorize('wizard',  $job);
+        $job = Job::findOrFail($job_id);
+        $this->authorize('wizard', $job);
         $change = JobChangeOrder::findOrFail($id);
         $change->number = $request->number;
         $change->added_on = date('Y-m-d', strtotime($request->added_on));
@@ -143,17 +145,17 @@ class JobChangesController extends Controller
         $change->description = $request->input('description');
         $change->save();
         if (isset($request['attached_file'])) {
-            $xfilename = $change->id . "." . $f->guessExtension();
+            $xfilename = $change->id.'.'.$f->guessExtension();
             $xpath = 'attachments/job_changes/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $change->attached_file = $f->getClientOriginalName();
             $change->file_mime = $f->getMimeType();
             $change->file_path = $xpath.$xfilename;
             $change->save();
         }
         Session::flash('message', 'Change Order Updated');
-       
-        return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
     }
 
     /**
@@ -162,23 +164,25 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($job_id,$id)
+    public function destroy($job_id, $id)
     {
-        $job =Job::findOrFail($job_id);
-        $this->authorize('wizard',  $job);
-       $change = JobChangeOrder::findOrFail($id);
+        $job = Job::findOrFail($job_id);
+        $this->authorize('wizard', $job);
+        $change = JobChangeOrder::findOrFail($id);
         $change->delete();
-        
-        return redirect()->to(route('client.jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('client.jobs.edit', $job_id).'?#changes');
     }
 
-    public function showattachment($id) {
+    public function showattachment($id)
+    {
         $change = JobChangeOrder::findOrFail($id);
         $contents = Storage::get($change->file_path);
-        $response = Response::make($contents, '200',[
+        $response = Response::make($contents, '200', [
             'Content-Type' => $change->file_mime,
-            'Content-Disposition' => 'attachment; filename="' . $change->attached_file . '"',
-            ]);
+            'Content-Disposition' => 'attachment; filename="'.$change->attached_file.'"',
+        ]);
+
         return $response;
     }
 }

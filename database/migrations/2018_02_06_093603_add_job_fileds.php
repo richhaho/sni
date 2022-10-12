@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddJobFileds extends Migration
 {
@@ -20,7 +20,7 @@ class AddJobFileds extends Migration
             $table->tinyInteger('is_condo')->default(0);
             $table->string('association_name')->nullable();
             $table->string('a_unit_number')->nullable();
-                            
+
             $table->string('mall_name')->nullable();
             $table->string('m_unit_number')->nullable();
         });

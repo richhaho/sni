@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use \App\InvoiceLine;
+use App\InvoiceLine;
+use Illuminate\Http\Request;
 
 class InvoiceLinesController extends Controller
 {
@@ -81,12 +81,12 @@ class InvoiceLinesController extends Controller
      */
     public function destroy($id)
     {
-       $line = InvoiceLine::findOrFail($id);
-       $line->delete();
-       
-       $invoice = $line->invoice;
-       $invoice->updateTotal();
-       
-       return 'DELETED';
+        $line = InvoiceLine::findOrFail($id);
+        $line->delete();
+
+        $invoice = $line->invoice;
+        $invoice->updateTotal();
+
+        return 'DELETED';
     }
 }

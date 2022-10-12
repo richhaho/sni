@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\WorkOrder|null $work_order
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PdfPage whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PdfPage whereFields($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\PdfPage whereId($value)
@@ -26,6 +27,6 @@ class PdfPage extends Model
 {
     public function work_order()
     {
-         return $this->belongsTo('App\WorkOrder');
+        return $this->belongsTo('App\WorkOrder');
     }
 }

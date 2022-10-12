@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddDatesJobsTable extends Migration
 {
@@ -14,14 +14,12 @@ class AddDatesJobsTable extends Migration
     public function up()
     {
         Schema::table('jobs', function (Blueprint $table) {
-           $table->dropColumn('started_at');
+            $table->dropColumn('started_at');
         });
         Schema::table('jobs', function (Blueprint $table) {
-           $table->timestamp('last_day')->nullable()->after('country');
-           $table->timestamp('started_at')->nullable()->after('country');
-           
+            $table->timestamp('last_day')->nullable()->after('country');
+            $table->timestamp('started_at')->nullable()->after('country');
         });
-       
     }
 
     /**
@@ -36,8 +34,7 @@ class AddDatesJobsTable extends Migration
             $table->dropColumn('last_day');
         });
         Schema::table('jobs', function (Blueprint $table) {
-           $table->date('started_at')->nullable()->after('country');
+            $table->date('started_at')->nullable()->after('country');
         });
-        
     }
 }

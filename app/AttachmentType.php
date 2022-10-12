@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string $type
  * @property string|null $deleted_at
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\AttachmentType onlyTrashed()
  * @method static bool|null restore()
@@ -26,13 +27,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AttachmentType extends Model
 {
     use SoftDeletes;
-    
-    public $timestamps = false; 
-        /**
-     * primaryKey 
-     * 
-     * @var integer
-     * @access protected
+
+    public $timestamps = false;
+
+    /**
+     * primaryKey
+     *
+     * @var int
      */
     protected $primaryKey = 'slug';
 

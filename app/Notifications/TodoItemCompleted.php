@@ -3,29 +3,31 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use App\WorkOrder;
-use App\User;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class TodoItemCompleted extends Notification implements ShouldQueue
 {
     use Queueable;
+
     protected $work_order;
+
     protected $user;
+
     protected $todo;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($work_order, $user,$todo)
+    public function __construct($work_order, $user, $todo)
     {
-       $this->work_order = $work_order;
-       $this->user = $user;
-       $this->todo=$todo;
+        $this->work_order = $work_order;
+        $this->user = $user;
+        $this->todo = $todo;
     }
 
     /**
@@ -36,7 +38,7 @@ class TodoItemCompleted extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['broadcast','database','mail'];
+        return ['broadcast', 'database', 'mail'];
     }
 
     /**
@@ -57,7 +59,7 @@ class TodoItemCompleted extends Notification implements ShouldQueue
 
         return (new MailMessage)
                 ->from($fromEmail, $fromName)
-                ->line($this->user->full_name .' has completed TODO item: ' . $this->todo->name. ' on work order: #' . $this->work_order->number)
+                ->line($this->user->full_name.' has completed TODO item: '.$this->todo->name.' on work order: #'.$this->work_order->number)
                 ->line('Thank you for using Sunshine Notices!');
     }
 
@@ -85,15 +87,16 @@ class TodoItemCompleted extends Notification implements ShouldQueue
         $url_admin = route('workorders.todo.edit', ['work_id' => $this->work_order->id, 'id' => $this->todo->id]);
         $url_client = route('client.notices.todo.edit', ['work_id' => $this->work_order->id, 'id' => $this->todo->id]);
         $ndata = [
-            'note' => 'Todo '. $this->todo->name.' completed on Workorder #' . $this->work_order->number,
-            'entered_at' => $this->todo->completed_at
+            'note' => 'Todo '.$this->todo->name.' completed on Workorder #'.$this->work_order->number,
+            'entered_at' => $this->todo->completed_at,
         ];
+
         return [
             'note_id' => $this->work_order->id,
-            'message' =>  $ndata,
-            'user' => $this->user ,
-            'url_admin' =>$url_admin,
-            'url_client' =>$url_client,
+            'message' => $ndata,
+            'user' => $this->user,
+            'url_admin' => $url_admin,
+            'url_client' => $url_client,
         ];
     }
 
@@ -102,16 +105,16 @@ class TodoItemCompleted extends Notification implements ShouldQueue
         $url_admin = route('workorders.todo.edit', ['work_id' => $this->work_order->id, 'id' => $this->todo->id]);
         $url_client = route('client.notices.todo.edit', ['work_id' => $this->work_order->id, 'id' => $this->todo->id]);
         $ndata = [
-            'note' => 'Todo '. $this->todo->name.' completed on Workorder #' . $this->work_order->number,
-            'entered_at' => $this->todo->completed_at
+            'note' => 'Todo '.$this->todo->name.' completed on Workorder #'.$this->work_order->number,
+            'entered_at' => $this->todo->completed_at,
         ];
+
         return new BroadcastMessage([
             'note_id' => $this->work_order->id,
-            'message' =>  $ndata,
+            'message' => $ndata,
             'user' => $this->user,
-            'url_admin' =>$url_admin,
-            'url_client' =>$url_client,
+            'url_admin' => $url_admin,
+            'url_client' => $url_client,
         ]);
     }
-
 }

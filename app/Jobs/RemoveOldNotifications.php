@@ -3,15 +3,13 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class RemoveOldNotifications implements ShouldQueue
-
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -30,11 +28,9 @@ class RemoveOldNotifications implements ShouldQueue
      *
      * @return void
      */
-
     public function handle()
     {
-        $aMonthAgo = date('Y-m-d H:i:s', strtotime("-30 days"));
-        $notifications=DB::table('notifications')->where('created_at', '<', $aMonthAgo)->delete();
+        $aMonthAgo = date('Y-m-d H:i:s', strtotime('-30 days'));
+        $notifications = DB::table('notifications')->where('created_at', '<', $aMonthAgo)->delete();
     }
 }
-

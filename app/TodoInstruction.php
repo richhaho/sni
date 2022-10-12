@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TodoInstruction extends Model
 {
-    protected $fillable = ['todo_id','instruction'];
-    protected $table='todo_instructions';
+    protected $fillable = ['todo_id', 'instruction'];
+
+    protected $table = 'todo_instructions';
 
     public function todo()
     {
@@ -18,5 +19,4 @@ class TodoInstruction extends Model
     {
         return User::where('id', $this->entered_by)->first();
     }
-   
 }

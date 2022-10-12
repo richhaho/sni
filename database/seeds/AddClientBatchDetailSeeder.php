@@ -1,11 +1,9 @@
 <?php
 
-use Illuminate\Database\Seeder;
-
-use App\BatchDetail;
 use App\Attachment;
+use App\BatchDetail;
 use App\WorkOrder;
-use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class AddClientBatchDetailSeeder extends Seeder
 {
@@ -16,19 +14,17 @@ class AddClientBatchDetailSeeder extends Seeder
      */
     public function run()
     {
-
         $batchdetails = BatchDetail::all();
-        
-        foreach($batchdetails as $bd) {
-          $attachment = Attachment::find($bd->attachment_id);
-          if($attachment) {
-            $wo = WorkOrder::findOrFail($attachment->attachable_id);
 
-            $client_id = $wo->job->client_id;
-            $bd->client_id = $client_id;
-            $bd->save();
-          }
+        foreach ($batchdetails as $bd) {
+            $attachment = Attachment::find($bd->attachment_id);
+            if ($attachment) {
+                $wo = WorkOrder::findOrFail($attachment->attachable_id);
+
+                $client_id = $wo->job->client_id;
+                $bd->client_id = $client_id;
+                $bd->save();
+            }
         }
     }
-    
 }

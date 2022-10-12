@@ -1,37 +1,39 @@
 <?php
+
 namespace App\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use App\MailingBatch;
 use App\CompanySetting;
 use App\FtpLocation;
-use League\Flysystem\Filesystem;
- 
+use App\MailingBatch;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use League\Flysystem\Adapter\Ftp as FtpAdapter;
 // The two filesystem adapters we will use
 use League\Flysystem\Adapter\Local as LocalAdapter;
-use League\Flysystem\Adapter\Ftp as FtpAdapter;
- 
+use League\Flysystem\Filesystem;
 // MountManager for quick and easy copying
 use League\Flysystem\MountManager;
 
 class FTPUpload implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
     protected $batchId;
+
     protected $location;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($batchId,$location) 
+    public function __construct($batchId, $location)
     {
-        $this->batchId =$batchId;
-        $this->location =$location;
+        $this->batchId = $batchId;
+        $this->location = $location;
     }
 
     /**
@@ -44,28 +46,27 @@ class FTPUpload implements ShouldQueue
         $company = CompanySetting::first();
         $ftplocation = FtpLocation::findOrFail($this->location);
         $batch = MailingBatch::findOrFail($this->batchId);
-        $attachment = $batch->attachments->where('original_name','mailing-final-'. $this->batchId .'.pdf')->first();
-
+        $attachment = $batch->attachments->where('original_name', 'mailing-final-'.$this->batchId.'.pdf')->first();
 
         $local_adapter = new LocalAdapter(storage_path());
         $local = new Filesystem($local_adapter);
 
         // And we want to copy it to our FTP
         $ftp_adapter = new FtpAdapter([
-         'host' => $company->ftp_host,
-         'username' => $company->ftp_user,
-         'password' => $company->ftp_password,
+            'host' => $company->ftp_host,
+            'username' => $company->ftp_user,
+            'password' => $company->ftp_password,
         ]);
         $ftp = new Filesystem($ftp_adapter);
 
         // Mount the two filesystems
         $mountManager = new MountManager([
-         'local' => $local,
-         'ftp' => $ftp,
+            'local' => $local,
+            'ftp' => $ftp,
         ]);
 
         // Copy the file from our local disk to the ftp disk
-        $mountManager->copy( 'local://app/' . $attachment->file_path, 'ftp:/'.$ftplocation->path . '/' . $attachment->original_name);
+        $mountManager->copy('local://app/'.$attachment->file_path, 'ftp:/'.$ftplocation->path.'/'.$attachment->original_name);
         // Copy the file from our local disk to the ftp disk
         //$mountManager->move( 'local://some/file.ext', 'ftp://some/file.ext' );
     }

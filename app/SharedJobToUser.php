@@ -20,11 +20,11 @@ use Illuminate\Database\Eloquent\Model;
 class SharedJobToUser extends Model
 {
     protected $fillable = [
-        'job_id','user_id'
+        'job_id', 'user_id',
     ];
 
-    protected $table='shared_jobs_to_users';
-    
+    protected $table = 'shared_jobs_to_users';
+
     public function job()
     {
         return $this->belongsTo('App\Job')->withTrashed();

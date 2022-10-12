@@ -45,18 +45,16 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof \Illuminate\Session\TokenMismatchException)
-        {
+        if ($exception instanceof \Illuminate\Session\TokenMismatchException) {
             return redirect()
                 ->back()
                 ->withInput($request->except('password', '_token'))
                 ->withError('Validation Token has expired. Please try again');
         }
         //if (!($exception instanceof \Illuminate\Session\TokenMismatchException))  {
-        //    return response()->view('errors.whoops'); 
+        //    return response()->view('errors.whoops');
         //}
-        
-        
+
         return parent::render($request, $exception);
     }
 
@@ -72,7 +70,7 @@ class Handler extends ExceptionHandler
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
-        
+
         return redirect()->guest(route('login'));
     }
 }

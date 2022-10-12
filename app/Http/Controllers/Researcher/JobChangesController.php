@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Job;
 use App\JobChangeOrder;
+use Illuminate\Http\Request;
 use Session;
-
 
 class JobChangesController extends Controller
 {
@@ -28,7 +27,6 @@ class JobChangesController extends Controller
      */
     public function create($job_id)
     {
-       
     }
 
     /**
@@ -37,27 +35,25 @@ class JobChangesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$job_id)
+    public function store(Request $request, $job_id)
     {
-         $this->validate($request, [
+        $this->validate($request, [
             'number' => 'required',
             'added_on' => 'required',
             'amount' => 'required|numeric',
         ]);
-        
-        
-        
+
         $change = new JobChangeOrder;
         $change->number = $request->number;
         $change->added_on = date('Y-m-d', strtotime($request->added_on));
         $change->amount = $request->amount;
         $change->description = $request->description;
         $change->job_id = $job_id;
-            
+
         $change->save();
         Session::flash('message', 'New Change Order created');
-    
-        return redirect()->to(route('jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#changes');
     }
 
     /**
@@ -77,10 +73,11 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($job_id,$id)
+    public function edit($job_id, $id)
     {
         $change = JobChangeOrder::findOrFail($id);
-       return redirect()->to(route('jobs.edit',$job_id) .'?#changes')->with('change', $change);
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#changes')->with('change', $change);
     }
 
     /**
@@ -90,25 +87,25 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$job_id, $id)
+    public function update(Request $request, $job_id, $id)
     {
         $this->validate($request, [
             'number' => 'required',
             'added_on' => 'required',
             'amount' => 'required|numeric',
         ]);
-        $job =Job::findOrFail($job_id);
+        $job = Job::findOrFail($job_id);
 
         $change = JobChangeOrder::findOrFail($id);
         $change->number = $request->number;
         $change->added_on = date('Y-m-d', strtotime($request->added_on));
         $change->amount = $request->amount;
         $change->description = $request->input('description');
-        
+
         $change->save();
         Session::flash('message', 'Change Order Updated');
-       
-        return redirect()->to(route('jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#changes');
     }
 
     /**
@@ -117,11 +114,11 @@ class JobChangesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($job_id,$id)
+    public function destroy($job_id, $id)
     {
-       $change = JobChangeOrder::findOrFail($id);
+        $change = JobChangeOrder::findOrFail($id);
         $change->delete();
-        
-        return redirect()->to(route('jobs.edit',$job_id) .'?#changes');
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#changes');
     }
 }

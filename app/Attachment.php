@@ -29,6 +29,7 @@ use Storage;
  * @property int $resent_id
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $attachable
  * @property-read \App\WorkOrderRecipient $recipient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Attachment whereAttachableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Attachment whereAttachableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Attachment whereCreatedAt($value)
@@ -51,30 +52,28 @@ use Storage;
  */
 class Attachment extends Model
 {
-    
-    protected $dates = ['printed_at','resent_at'];
-    
+    protected $dates = ['printed_at', 'resent_at'];
+
     public static function boot()
     {
         parent::boot();
 
-        Attachment::deleted(function($attachment){
-             $file = $attachment->file_path;
-             $thumb_file = $attachment->thumb_path;
-             Storage::delete($file);
-             Storage::delete($thumb_file);
+        Attachment::deleted(function ($attachment) {
+            $file = $attachment->file_path;
+            $thumb_file = $attachment->thumb_path;
+            Storage::delete($file);
+            Storage::delete($thumb_file);
         });
     }
 
+    use Searchable;
 
-     use Searchable;
-     public function attachable()
+    public function attachable()
     {
         return $this->morphTo();
     }
-    
 
-     public function toSearchableArray()
+    public function toSearchableArray()
     {
         $array = $this->toArray();
         unset($array['id']);
@@ -88,11 +87,12 @@ class Attachment extends Model
         unset($array['pinted_at']);
         unset($array['attachable_id']);
         unset($array['attachable_type']);
-        
+
         return $array;
     }
-    
-    public function recipient() {
-        return $this->belongsTo('App\WorkOrderRecipient','generated_id');
+
+    public function recipient()
+    {
+        return $this->belongsTo('App\WorkOrderRecipient', 'generated_id');
     }
 }

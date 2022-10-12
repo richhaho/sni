@@ -3,14 +3,16 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SubscriptionPaymentMade extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
     public $payment;
+
     public $client;
 
     /**
@@ -20,17 +22,16 @@ class SubscriptionPaymentMade extends Mailable implements ShouldQueue
      */
     public function __construct($payment, $client)
     {
-        $this->payment =$payment;
+        $this->payment = $payment;
         $this->client = $client;
 
         $from = \App\FromEmails::where('class', 'PaymentMade')->first();
         if (isset($from->from_email)) {
             $this->from[] = [
                 'address' => $from->from_email,
-                'name' => $from->from_name
+                'name' => $from->from_name,
             ];
         }
-
     }
 
     /**

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Session;
 use App\Job;
 use App\JobPaymentHistory;
+use Illuminate\Http\Request;
+use Session;
 
 class JobPaymentsController extends Controller
 {
@@ -36,26 +36,23 @@ class JobPaymentsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$job_id)
+    public function store(Request $request, $job_id)
     {
         $this->validate($request, [
             'payed_on' => 'required',
             'amount' => 'required|numeric',
         ]);
-        
-        
-        
+
         $payment = new JobPaymentHistory;
         $payment->payed_on = date('Y-m-d', strtotime($request->payed_on));
         $payment->amount = $request->amount;
         $payment->description = $request->description;
         $payment->job_id = $job_id;
-            
+
         $payment->save();
         Session::flash('message', 'New Payment added');
-    
-        return redirect()->to(route('jobs.edit',$job_id) .'?#payments');
-        
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 
     /**
@@ -75,11 +72,11 @@ class JobPaymentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($job_id,$id)
+    public function edit($job_id, $id)
     {
-       $payment = JobPaymentHistory::findOrFail($id);
-       return redirect()->to(route('jobs.edit',$job_id) .'?#payments')->with('payment', $payment);
-       
+        $payment = JobPaymentHistory::findOrFail($id);
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#payments')->with('payment', $payment);
     }
 
     /**
@@ -91,24 +88,21 @@ class JobPaymentsController extends Controller
      */
     public function update(Request $request, $job_id, $id)
     {
-                
-       
-      $this->validate($request, [
+        $this->validate($request, [
             'payed_on' => 'required',
             'amount' => 'required|numeric',
         ]);
-        $job =Job::findOrFail($job_id);
+        $job = Job::findOrFail($job_id);
 
         $payment = JobPaymentHistory::findOrFail($id);
         $payment->payed_on = date('Y-m-d', strtotime($request->payed_on));
         $payment->amount = $request->amount;
         $payment->description = $request->input('description');
-        
+
         $payment->save();
         Session::flash('message', 'Payment Updated');
-       
-        return redirect()->to(route('jobs.edit',$job_id) .'?#payments');
-        
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 
     /**
@@ -117,12 +111,11 @@ class JobPaymentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($job_id,$id)
+    public function destroy($job_id, $id)
     {
         $payment = JobPaymentHistory::findOrFail($id);
         $payment->delete();
-        
-        return redirect()->to(route('jobs.edit',$job_id) .'?#payments');
-     
+
+        return redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 }

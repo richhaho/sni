@@ -1,8 +1,10 @@
-<?php namespace App\Http\Composers;
+<?php
 
-use Illuminate\Contracts\View\View;
-use App\Notification;
+namespace App\Http\Composers;
+
 use Auth;
+use Illuminate\Contracts\View\View;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -14,26 +16,27 @@ use Auth;
  *
  * @author carlos
  */
-class NavigationComposer {
+class NavigationComposer
+{
     //put your code here
-    protected  $user;
+    protected $user;
 
-
-    public function __construct() {
-        $this->user =Auth::user();
+    public function __construct()
+    {
+        $this->user = Auth::user();
     }
-    
-    public function compose(View $view) {
-      
-    }
-    
-    public function notifications (View $view) {
 
+    public function compose(View $view)
+    {
+    }
+
+    public function notifications(View $view)
+    {
         $data = [
             'count_notification' => $this->user->notifications->count(),
-            'notifications' =>  $this->user->notifications
+            'notifications' => $this->user->notifications,
         ];
-        
+
         $view->with($data);
     }
 }

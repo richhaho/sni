@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\AttachmentType;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Session;
-    
+
 class AttachmentTypesController extends Controller
 {
     /**
@@ -16,14 +16,13 @@ class AttachmentTypesController extends Controller
      */
     public function index()
     {
-        $types = AttachmentType::orderBy('type','DESC')->get();
-        
+        $types = AttachmentType::orderBy('type', 'DESC')->get();
+
         $data = [
-            'types' => $types
+            'types' => $types,
         ];
-                
-        return view('researcher.attachmenttypes.index',$data);
-        
+
+        return view('researcher.attachmenttypes.index', $data);
     }
 
     /**
@@ -44,26 +43,25 @@ class AttachmentTypesController extends Controller
      */
     public function store(Request $request)
     {
-        
-         $this->validate($request, [
-        'name' => 'required',
+        $this->validate($request, [
+            'name' => 'required',
         ]);
-         
-        $type =AttachmentType::onlyTrashed()->where('slug', '=', str_slug($request->input('name')))->first();
+
+        $type = AttachmentType::onlyTrashed()->where('slug', '=', str_slug($request->input('name')))->first();
         if ($type) {
             $type->restore();
         } else {
-             $this->validate($request, [
-            'name' => 'unique:attachment_types',
+            $this->validate($request, [
+                'name' => 'unique:attachment_types',
             ]);
             $type = new AttachmentType();
             $type->slug = str_slug($request->input('name'));
             $type->name = $request->input('name');
             $type->save();
         }
-        Session::flash('message', 'Attacment Type ' . $type->name . ' successfully created.');
+        Session::flash('message', 'Attacment Type '.$type->name.' successfully created.');
+
         return redirect()->route('attachmenttypes.index');
-        
     }
 
     /**
@@ -111,11 +109,9 @@ class AttachmentTypesController extends Controller
         $type = AttachmentType::where('slug', '=', $id)->firstOrFail();
         $temp_name = $type->name;
         $type->delete();
-        
-         Session::flash('message', 'Attachment Type ' .$temp_name . ' successfully deleted.');
-        
+
+        Session::flash('message', 'Attachment Type '.$temp_name.' successfully deleted.');
+
         return redirect()->route('attachmenttypes.index');
-        
-        
     }
-} 
+}

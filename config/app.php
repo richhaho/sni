@@ -162,7 +162,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-      
+
         /*
          * Package Service Providers...
          */
@@ -172,7 +172,7 @@ return [
         DamianTW\MySQLScout\Providers\MySQLScoutServiceProvider::class,
         //Barryvdh\DomPDF\ServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
-         Milon\Barcode\BarcodeServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
         Oriceon\Settings\SettingsServiceProvider::class,
         /*
          * Application Service Providers...
@@ -188,7 +188,7 @@ return [
         App\Providers\HelperServiceProvider::class,
         SquareBoat\Sneaker\SneakerServiceProvider::class,
         Aloha\Twilio\Support\Laravel\ServiceProvider::class,
-        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
     ],
 
     /*
@@ -239,7 +239,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+        'Entrust' => Zizaco\Entrust\EntrustFacade::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         //'PDF' => Barryvdh\DomPDF\Facade::class,
@@ -248,7 +248,7 @@ return [
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         'Twilio' => Aloha\Twilio\Support\Laravel\Facade::class,
-        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 
 ];

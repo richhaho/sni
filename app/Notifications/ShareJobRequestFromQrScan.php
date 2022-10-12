@@ -1,17 +1,19 @@
 <?php
 
 namespace App\Notifications;
+
 use App\Job;
 use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ShareJobRequestFromQrScan extends Notification
 {
     use Queueable;
+
     protected $job;
+
     protected $user;
 
     /**
@@ -21,8 +23,8 @@ class ShareJobRequestFromQrScan extends Notification
      */
     public function __construct(Job $job, User $user)
     {
-       $this->job =$job;
-       $this->user =$user;
+        $this->job = $job;
+        $this->user = $user;
     }
 
     /**
@@ -51,13 +53,14 @@ class ShareJobRequestFromQrScan extends Notification
             $fromEmail = $from->from_email;
             $fromName = $from->from_name;
         }
+
         return (new MailMessage)
                 ->from($fromEmail, $fromName)
-                ->subject("Share the job to monitoring user")
-                ->line($this->user->full_name ." has requested you share your job summary report with them.")
-                ->line("Job name: ". $this->job->name)
-                ->line("If you accept their request please click below button.")
-                ->action('Accept', url('/client/jobs/'. $this->job->id.'/share_to/'. $this->user->id))
+                ->subject('Share the job to monitoring user')
+                ->line($this->user->full_name.' has requested you share your job summary report with them.')
+                ->line('Job name: '.$this->job->name)
+                ->line('If you accept their request please click below button.')
+                ->action('Accept', url('/client/jobs/'.$this->job->id.'/share_to/'.$this->user->id))
                 ->line('Thank you for using Sunshine Notices!');
     }
 

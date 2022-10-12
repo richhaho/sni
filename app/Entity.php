@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
-
 /**
  * App\Entity
  *
@@ -21,6 +20,7 @@ use Laravel\Scout\Searchable;
  * @property int $hot_id
  * @property-read \App\Client $client
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\ContactInfo[] $contacts
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Entity hot()
  * @method static \Illuminate\Database\Query\Builder|\App\Entity onlyTrashed()
@@ -42,35 +42,38 @@ class Entity extends Model
 {
     use Searchable;
     use SoftDeletes;
+
 //
-    protected $fillable = ['firm_name','latest_type', 'client_id'];
-    
-    public function contacts() {
+    protected $fillable = ['firm_name', 'latest_type', 'client_id'];
+
+    public function contacts()
+    {
         return $this->hasMany('App\ContactInfo')->withTrashed();
     }
-    
+
     public function scopeHot($query)
     {
-        return $query->where('client_id','=',0);
+        return $query->where('client_id', '=', 0);
     }
-    
-    public function client() {
-        return $this->belongsTo('App\Client')->withTrashed();;
+
+    public function client()
+    {
+        return $this->belongsTo('App\Client')->withTrashed();
     }
-    
-     public function toSearchableArray()
+
+    public function toSearchableArray()
     {
         $array = $this->toArray();
         unset($array['id']);
         unset($array['latest_type']);
         unset($array['client_id']);
-        
+
         unset($array['created_at']);
         unset($array['updated_at']);
         unset($array['deleted_at']);
         unset($array['is_hot']);
         unset($array['hot_id']);
-       
+
         return $array;
     }
 }

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Job|null $job
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobChangeOrder whereAddedOn($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobChangeOrder whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobChangeOrder whereCreatedAt($value)
@@ -28,7 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class JobChangeOrder extends Model
 {
-    protected $fillable = ['description','amaount','added_on','number', 'attached_file'];
+    protected $fillable = ['description', 'amaount', 'added_on', 'number', 'attached_file'];
+
     public function job()
     {
         return $this->belongsTo('App\Job');

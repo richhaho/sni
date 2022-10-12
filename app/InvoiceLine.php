@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Invoice $invoice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InvoiceLine whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InvoiceLine whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\InvoiceLine whereDescription($value)
@@ -30,9 +31,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class InvoiceLine extends Model
 {
-    
-    
-   public function invoice() {
+    public function invoice()
+    {
         return $this->belongsTo('App\Invoice');
-   }
+    }
 }

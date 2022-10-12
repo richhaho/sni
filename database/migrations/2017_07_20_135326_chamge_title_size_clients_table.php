@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ChamgeTitleSizeClientsTable extends Migration
 {
@@ -17,7 +17,7 @@ class ChamgeTitleSizeClientsTable extends Migration
             $table->dropColumn('title');
         });
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('title',191)->nullable();
+            $table->string('title', 191)->nullable();
         });
     }
 
@@ -28,11 +28,11 @@ class ChamgeTitleSizeClientsTable extends Migration
      */
     public function down()
     {
-         Schema::table('clients', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
             $table->dropColumn('title');
         });
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('title',20)->nullable();
+            $table->string('title', 20)->nullable();
         });
     }
 }

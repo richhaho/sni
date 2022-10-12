@@ -1,16 +1,18 @@
 <?php
 
 namespace App\Notifications;
+
 use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class VerifyClientUserEmail extends Notification
 {
     use Queueable;
+
     protected $user;
+
     /**
      * Create a new notification instance.
      *
@@ -18,7 +20,7 @@ class VerifyClientUserEmail extends Notification
      */
     public function __construct(User $user)
     {
-       $this->user =$user;
+        $this->user = $user;
     }
 
     /**
@@ -47,12 +49,13 @@ class VerifyClientUserEmail extends Notification
             $fromEmail = $from->from_email;
             $fromName = $from->from_name;
         }
+
         return (new MailMessage)
                     ->from($fromEmail, $fromName)
                     ->subject('Email Verification')
                     ->success()
-                    ->line( $this->user->full_name . ', you must validate your email address, please do so by clicking the following button')
-                    ->action('Validate your Email', url('register/confirm/'. $this->user->email_token))
+                    ->line($this->user->full_name.', you must validate your email address, please do so by clicking the following button')
+                    ->action('Validate your Email', url('register/confirm/'.$this->user->email_token))
                     ->line('Thank you for using Sunshine Notices!');
     }
 

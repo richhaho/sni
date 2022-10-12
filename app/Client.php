@@ -2,11 +2,10 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
-use Carbon\Carbon;
-
 
 /**
  * App\Client
@@ -57,6 +56,7 @@ use Carbon\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Invoice[] $open_invoices
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\WorkOrder[] $work_orders
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Client enable()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Client onlyTrashed()
@@ -102,117 +102,124 @@ class Client extends Model
 {
     use Searchable;
     use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['company_name','title', 'first_name','last_name', 'address_1','address_2','county','city','state','zip', 'country', 'phone', 'mobile','fax','email','parent_client_id','print_method','default_materials','interest_rate','status','gender','billing_type','send_certified','signature', 'service', 'subscription', 'expiration', 'self_30day_rate', 'self_365day_rate', 'full_30day_rate', 'full_365day_rate', 'description', 'monthly_payment', 'montly_recurring_price'];
+    protected $fillable = ['company_name', 'title', 'first_name', 'last_name', 'address_1', 'address_2', 'county', 'city', 'state', 'zip', 'country', 'phone', 'mobile', 'fax', 'email', 'parent_client_id', 'print_method', 'default_materials', 'interest_rate', 'status', 'gender', 'billing_type', 'send_certified', 'signature', 'service', 'subscription', 'expiration', 'self_30day_rate', 'self_365day_rate', 'full_30day_rate', 'full_365day_rate', 'description', 'monthly_payment', 'montly_recurring_price'];
+
     protected $appends = ['search_string'];
-    
-    
-    
-    public function getFullNameAttribute() {
-        $xatrribute = trim($this->first_name . ' ' . $this->last_name);
-        if (trim($xatrribute) =='') {
+
+    public function getFullNameAttribute()
+    {
+        $xatrribute = trim($this->first_name.' '.$this->last_name);
+        if (trim($xatrribute) == '') {
             return $this->company_name;
-        }   else {
+        } else {
             return $xatrribute;
-        }     
-        
+        }
     }
 
-    public function getSubscriptionRateAttribute() {
+    public function getSubscriptionRateAttribute()
+    {
         if ($this->service == 'full' && $this->subscription == '30') {
             return $this->full_30day_rate;
-        } elseif  ($this->service == 'full' && $this->subscription == '365') {
+        } elseif ($this->service == 'full' && $this->subscription == '365') {
             return $this->full_365day_rate;
-        } elseif  ($this->service == 'self' && $this->subscription == '30') {
+        } elseif ($this->service == 'self' && $this->subscription == '30') {
             return $this->self_30day_rate;
-        } elseif  ($this->service == 'self' && $this->subscription == '365') {
+        } elseif ($this->service == 'self' && $this->subscription == '365') {
             return $this->self_365day_rate;
         } else {
             return null;
         }
     }
-    
-     public function jobs()
+
+    public function jobs()
     {
-        return $this->hasMany('App\Job')->withTrashed();;
+        return $this->hasMany('App\Job')->withTrashed();
     }
-    
-    public function admin_user() {
-        return $this->belongsTo('App\User','client_user_id')->withTrashed();
+
+    public function admin_user()
+    {
+        return $this->belongsTo('App\User', 'client_user_id')->withTrashed();
     }
-    
-    public function users() {
-        return $this->hasMany('App\User')->isRole(['client','client-secondary'])->withTrashed();
+
+    public function users()
+    {
+        return $this->hasMany('App\User')->isRole(['client', 'client-secondary'])->withTrashed();
     }
-    public function activeusers() {
-        return $this->hasMany('App\User')->isRole(['client','client-secondary']);
+
+    public function activeusers()
+    {
+        return $this->hasMany('App\User')->isRole(['client', 'client-secondary']);
     }
-    
-    public function entities() {
-        return $this->hasMany('App\Entity')->withTrashed();;
+
+    public function entities()
+    {
+        return $this->hasMany('App\Entity')->withTrashed();
     }
-    
-    public function invoices() {
+
+    public function invoices()
+    {
         return $this->hasMany('App\Invoice');
     }
-    public function batch_invoices() {
+
+    public function batch_invoices()
+    {
         return $this->hasMany('App\InvoiceBatches');
     }
-    
-    public function open_invoices() {
-        return $this->hasMany('App\Invoice')->where('status','open')->where('created_at', '<=' , Carbon::now()) ;
+
+    public function open_invoices()
+    {
+        return $this->hasMany('App\Invoice')->where('status', 'open')->where('created_at', '<=', Carbon::now());
     }
-    
+
     public function contacts()
     {
         return $this->hasManyThrough('App\ContactInfo', 'App\Entity')->withTrashed();
     }
-    
+
     public function work_orders()
     {
         return $this->hasManyThrough('App\WorkOrder', 'App\Job')->withTrashed();
     }
-    
-     
-    
-    public function getSearchStringAttribute() {
-         $lines = array();
-         $line2 = array();
-         if(strlen($this->address_1) > 0) {
+
+    public function getSearchStringAttribute()
+    {
+        $lines = [];
+        $line2 = [];
+        if (strlen($this->address_1) > 0) {
             $lines[] = $this->address_1;
-         }
-         if(strlen($this->address_2) > 0) {
+        }
+        if (strlen($this->address_2) > 0) {
             $lines[] = $this->address_2;
-         }
-         
-         if(strlen($this->city) > 0) {
-             $line2[] = $this->city;
-         }
-         if(strlen($this->state) > 0) {
-             $line2[] = strtoupper($this->state);
-         }
-         if(strlen($this->zip) > 0) {
-             $line2[] = $this->zip;
-         }
-         $lines[] = implode(', ',$line2);
-         if(strlen($this->country) > 0) {
+        }
+
+        if (strlen($this->city) > 0) {
+            $line2[] = $this->city;
+        }
+        if (strlen($this->state) > 0) {
+            $line2[] = strtoupper($this->state);
+        }
+        if (strlen($this->zip) > 0) {
+            $line2[] = $this->zip;
+        }
+        $lines[] = implode(', ', $line2);
+        if (strlen($this->country) > 0) {
             $lines[] = $this->country;
-         }   
-         $xaddress = implode(' - ',$lines);
-         
-        
+        }
+        $xaddress = implode(' - ', $lines);
+
         return trim($xaddress);
-        
     }
-    
+
     public function toSearchableArray()
     {
         $array = $this->toArray();
-       
+
         unset($array['title']);
         unset($array['primary']);
         unset($array['parent_client_id']);
@@ -227,87 +234,81 @@ class Client extends Model
         unset($array['send_certified']);
         unset($array['print_method']);
         unset($array['full_name']);
-        unset($array['search_string']);    
-        unset($array['payeezy_type']);    
-        unset($array['payeezy_value']); 
-        unset($array['payeezy_cardholder_name']); 
-        unset($array['payeezy_exp_date']); 
-        
+        unset($array['search_string']);
+        unset($array['payeezy_type']);
+        unset($array['payeezy_value']);
+        unset($array['payeezy_cardholder_name']);
+        unset($array['payeezy_exp_date']);
+
         return $array;
     }
-    
-    
+
     public function scopeEnable($query)
     {
         return $query->where('status', 4);
     }
-    
-    
-      public function getFullAddressAttribute() {
-         $lines = array();
-         $line2 = array();
-         if(strlen($this->address_1) > 0) {
+
+    public function getFullAddressAttribute()
+    {
+        $lines = [];
+        $line2 = [];
+        if (strlen($this->address_1) > 0) {
             $lines[] = $this->address_1;
-         }
-         if(strlen($this->address_2) > 0) {
+        }
+        if (strlen($this->address_2) > 0) {
             $lines[] = $this->address_2;
-         }
-         
-         if(strlen($this->city) > 0) {
-             $line2[] = $this->city;
-         }
-         if(strlen($this->state) > 0) {
-             $line2[] = $this->state;
-         }
-         if(strlen($this->zip) > 0) {
-             $line2[] = $this->zip;
-         }
-         $lines[] = implode(' ',$line2);
-         if(strlen($this->country) > 0) {
-            if (strtoupper($this->country) =='UNITED STATES') {
-                
-            }else {
+        }
+
+        if (strlen($this->city) > 0) {
+            $line2[] = $this->city;
+        }
+        if (strlen($this->state) > 0) {
+            $line2[] = $this->state;
+        }
+        if (strlen($this->zip) > 0) {
+            $line2[] = $this->zip;
+        }
+        $lines[] = implode(' ', $line2);
+        if (strlen($this->country) > 0) {
+            if (strtoupper($this->country) == 'UNITED STATES') {
+            } else {
                 $lines[] = $this->country;
             }
-         }   
-         $xaddress = implode('<br />',$lines);
-         
-        
+        }
+        $xaddress = implode('<br />', $lines);
+
         return trim($xaddress);
-        
     }
-    
-    
-     public function getAddressNoCountryAttribute() {
-         $lines = array();
-         $line2 = array();
-         if(strlen($this->address_1) > 0) {
+
+    public function getAddressNoCountryAttribute()
+    {
+        $lines = [];
+        $line2 = [];
+        if (strlen($this->address_1) > 0) {
             $lines[] = $this->address_1;
-         }
-         if(strlen($this->address_2) > 0) {
+        }
+        if (strlen($this->address_2) > 0) {
             $lines[] = $this->address_2;
-         }
-         
-         if(strlen($this->city) > 0) {
-             $line2[] = $this->city;
-         }
-         if(strlen($this->state) > 0) {
-             $line2[] = $this->state;
-         }
-         if(strlen($this->zip) > 0) {
-             $line2[] = $this->zip;
-         }
-         $lines[] = implode(' ',$line2);
-       
-         $xaddress = implode('<br />',$lines);
-         
-        
+        }
+
+        if (strlen($this->city) > 0) {
+            $line2[] = $this->city;
+        }
+        if (strlen($this->state) > 0) {
+            $line2[] = $this->state;
+        }
+        if (strlen($this->zip) > 0) {
+            $line2[] = $this->zip;
+        }
+        $lines[] = implode(' ', $line2);
+
+        $xaddress = implode('<br />', $lines);
+
         return trim($xaddress);
-        
     }
-    
-    public function getMailingAddressAttribute() {
-        return $this->company_name . '<br>' . $this->address_no_country;
+
+    public function getMailingAddressAttribute()
+    {
+        return $this->company_name.'<br>'.$this->address_no_country;
     }
-    
 }

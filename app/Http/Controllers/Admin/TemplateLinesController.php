@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\TemplateLine;
+use Illuminate\Http\Request;
 
 class TemplateLinesController extends Controller
 {
@@ -81,9 +81,9 @@ class TemplateLinesController extends Controller
      */
     public function destroy($id)
     {
-       $line = TemplateLine::findOrFail($id);
-       $line->delete();
-       return 'DELETED';
-               
+        $line = TemplateLine::findOrFail($id);
+        $line->delete();
+
+        return 'DELETED';
     }
 }

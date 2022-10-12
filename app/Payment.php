@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $user_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Payment whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Payment whereClientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Payment whereCreatedAt($value)
@@ -35,5 +36,4 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Payment extends Model
 {
-    
 }

@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Providers;
-use App\Job;
-use App\Policies\client\JobPolicy;
-use App\Policies\client\InvoicePolicy;
+
 use App\Invoice;
-use Illuminate\Support\Facades\Gate;
+use App\Job;
+use App\Policies\client\InvoicePolicy;
+use App\Policies\client\JobPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -16,8 +16,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-       Job::class => JobPolicy::class,
-       Invoice::class => InvoicePolicy::class,
+        Job::class => JobPolicy::class,
+        Invoice::class => InvoicePolicy::class,
     ];
 
     /**

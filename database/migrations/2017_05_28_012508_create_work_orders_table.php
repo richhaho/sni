@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateWorkOrdersTable extends Migration
 {
@@ -16,8 +16,8 @@ class CreateWorkOrdersTable extends Migration
         Schema::create('work_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('job_id');
-            $table->string('status',50)->nullable();
-            $table->string('type',50)->nullable();
+            $table->string('status', 50)->nullable();
+            $table->string('type', 50)->nullable();
             $table->dateTime('due_at')->nullable();
             $table->tinyInteger('is_rush')->default(0);
             $table->timestamps();

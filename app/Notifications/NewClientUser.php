@@ -4,24 +4,27 @@ namespace App\Notifications;
 
 use App\Client;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class NewClientUser extends Notification implements ShouldQueue
 {
     public $client_id;
+
     public $notification;
+
     public $user;
+
     use Queueable;
-   
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($client_id,$notification,$user)
+    public function __construct($client_id, $notification, $user)
     {
         $this->client_id = $client_id;
         $this->notification = $notification;
@@ -36,7 +39,7 @@ class NewClientUser extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['broadcast','database','mail'];
+        return ['broadcast', 'database', 'mail'];
     }
 
     /**
@@ -48,11 +51,11 @@ class NewClientUser extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         $client = Client::findOrFail($this->client_id);
-        return (new MailMessage)
-                ->line('A new Client User "' . $client->company_name .'" has been created. Please Review that user and approve.')
-                ->action('View Client Detail', route('clients.edit',$this->client_id))
-                    ->line('Thank you for using Sunshine Notices!');
 
+        return (new MailMessage)
+                ->line('A new Client User "'.$client->company_name.'" has been created. Please Review that user and approve.')
+                ->action('View Client Detail', route('clients.edit', $this->client_id))
+                    ->line('Thank you for using Sunshine Notices!');
     }
 
     /**
@@ -64,29 +67,28 @@ class NewClientUser extends Notification implements ShouldQueue
     public function toDatabase($notifiable)
     {
         $client = Client::findOrFail($this->client_id);
-        
-        $url = route('clients.edit',$client->id);
-        
+
+        $url = route('clients.edit', $client->id);
+
         return [
             'note_id' => $this->client_id,
-            'message' =>  $this->notification,
-            'user' => $this->user ,
-            'url_admin' =>$url
+            'message' => $this->notification,
+            'user' => $this->user,
+            'url_admin' => $url,
         ];
     }
-    
+
     public function toBroadcast($notifiable)
     {
-        
         $client = Client::findOrFail($this->client_id);
-        
-        $url = route('clients.edit',$client->id);
-        
-            return new BroadcastMessage([
-                'note_id' => $this->client_id,
-                'message' =>  $this->notification,
-                'user' => $this->user ,
-                'url_admin' =>$url
-            ]);
+
+        $url = route('clients.edit', $client->id);
+
+        return new BroadcastMessage([
+            'note_id' => $this->client_id,
+            'message' => $this->notification,
+            'user' => $this->user,
+            'url_admin' => $url,
+        ]);
     }
 }
