@@ -199,7 +199,7 @@ class ContactInfo extends Model
 
     public function entity()
     {
-        return $this->belongsTo('App\Entity')->withTrashed();
+        return $this->belongsTo(\App\Entity::class)->withTrashed();
     }
 
     public static function scopeSearchByKeyword($query, $keyword)
@@ -251,11 +251,11 @@ class ContactInfo extends Model
 
     public function linked()
     {
-        return $this->belongsTo('App\ContactInfo', 'hot_id');
+        return $this->belongsTo(\App\ContactInfo::class, 'hot_id');
     }
 
     public function links()
     {
-        return $this->hasMany('App\ContactInfo', 'hot_id');
+        return $this->hasMany(\App\ContactInfo::class, 'hot_id');
     }
 }

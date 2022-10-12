@@ -66,12 +66,12 @@ class WorkOrder extends Model
 
     public function job()
     {
-        return $this->belongsTo('App\Job')->withTrashed();
+        return $this->belongsTo(\App\Job::class)->withTrashed();
     }
 
     public function attachments()
     {
-        return $this->morphMany('App\Attachment', 'attachable');
+        return $this->morphMany(\App\Attachment::class, 'attachable');
     }
 
     public function getNumberAttribute()
@@ -81,47 +81,47 @@ class WorkOrder extends Model
 
     public function client()
     {
-        return $this->hasManyThrough('App\Client', 'App\Job', 'client_id', 'id', 'job_id')->withTrashed();
+        return $this->hasManyThrough(\App\Client::class, \App\Job::class, 'client_id', 'id', 'job_id')->withTrashed();
     }
 
     public function notes()
     {
-        return $this->morphMany('App\Note', 'noteable');
+        return $this->morphMany(\App\Note::class, 'noteable');
     }
 
     public function invoices()
     {
-        return $this->hasMany('App\Invoice');
+        return $this->hasMany(\App\Invoice::class);
     }
 
     public function invoicesPending()
     {
-        return $this->hasMany('App\Invoice')->whereNull('payed_at');
+        return $this->hasMany(\App\Invoice::class)->whereNull('payed_at');
     }
 
     public function invoicesPaid()
     {
-        return $this->hasMany('App\Invoice')->whereNotNull('payed_at');
+        return $this->hasMany(\App\Invoice::class)->whereNotNull('payed_at');
     }
 
     public function wizardInvoices()
     {
-        return $this->hasMany('App\Invoice')->wizard();
+        return $this->hasMany(\App\Invoice::class)->wizard();
     }
 
     public function pdf_pages()
     {
-        return $this->hasMany('App\PdfPage');
+        return $this->hasMany(\App\PdfPage::class);
     }
 
     public function recipients()
     {
-        return $this->hasMany('App\WorkOrderRecipient');
+        return $this->hasMany(\App\WorkOrderRecipient::class);
     }
 
     public function order_type()
     {
-        return $this->belongsTo('App\WorkOrderType', 'type', 'slug')->withTrashed();
+        return $this->belongsTo(\App\WorkOrderType::class, 'type', 'slug')->withTrashed();
     }
 
     public function getPaidAttribute()

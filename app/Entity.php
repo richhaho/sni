@@ -48,7 +48,7 @@ class Entity extends Model
 
     public function contacts()
     {
-        return $this->hasMany('App\ContactInfo')->withTrashed();
+        return $this->hasMany(\App\ContactInfo::class)->withTrashed();
     }
 
     public function scopeHot($query)
@@ -58,7 +58,7 @@ class Entity extends Model
 
     public function client()
     {
-        return $this->belongsTo('App\Client')->withTrashed();
+        return $this->belongsTo(\App\Client::class)->withTrashed();
     }
 
     public function toSearchableArray()

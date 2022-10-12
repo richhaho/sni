@@ -44,6 +44,6 @@ class WorkOrderType extends Model
 
     public function template()
     {
-        return $this->hasOne('App\Template', 'type_slug', 'slug');
+        return $this->hasOne(\App\Template::class, 'type_slug', 'slug');
     }
 }

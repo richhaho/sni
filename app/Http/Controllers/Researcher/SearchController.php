@@ -64,7 +64,7 @@ class SearchController extends Controller
     {
         $jobs = Job::search($request->search)->get()->pluck('id');
         //dd($jobs);
-        $jobs_notes = Note::where('noteable_type', 'App\Job')->whereIn('noteable_id', $jobs)->get();
+        $jobs_notes = Note::where('noteable_type', \App\Job::class)->whereIn('noteable_id', $jobs)->get();
         //dd($jobs_notes);
         $notes = Note::search($request->search)->get();
 
@@ -79,7 +79,7 @@ class SearchController extends Controller
     {
         $jobs = $jobs = Job::search($request->search)->get()->pluck('id');
         //dd($jobs);
-        $jobs_attachments = Attachment::where('attachable_type', 'App\Job')->whereIn('attachable_id', $jobs)->get();
+        $jobs_attachments = Attachment::where('attachable_type', \App\Job::class)->whereIn('attachable_id', $jobs)->get();
         //dd($jobs_notes);
 
         $attachments = Attachment::search($request->search)->get();

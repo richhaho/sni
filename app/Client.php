@@ -139,52 +139,52 @@ class Client extends Model
 
     public function jobs()
     {
-        return $this->hasMany('App\Job')->withTrashed();
+        return $this->hasMany(\App\Job::class)->withTrashed();
     }
 
     public function admin_user()
     {
-        return $this->belongsTo('App\User', 'client_user_id')->withTrashed();
+        return $this->belongsTo(\App\User::class, 'client_user_id')->withTrashed();
     }
 
     public function users()
     {
-        return $this->hasMany('App\User')->isRole(['client', 'client-secondary'])->withTrashed();
+        return $this->hasMany(\App\User::class)->isRole(['client', 'client-secondary'])->withTrashed();
     }
 
     public function activeusers()
     {
-        return $this->hasMany('App\User')->isRole(['client', 'client-secondary']);
+        return $this->hasMany(\App\User::class)->isRole(['client', 'client-secondary']);
     }
 
     public function entities()
     {
-        return $this->hasMany('App\Entity')->withTrashed();
+        return $this->hasMany(\App\Entity::class)->withTrashed();
     }
 
     public function invoices()
     {
-        return $this->hasMany('App\Invoice');
+        return $this->hasMany(\App\Invoice::class);
     }
 
     public function batch_invoices()
     {
-        return $this->hasMany('App\InvoiceBatches');
+        return $this->hasMany(\App\InvoiceBatches::class);
     }
 
     public function open_invoices()
     {
-        return $this->hasMany('App\Invoice')->where('status', 'open')->where('created_at', '<=', Carbon::now());
+        return $this->hasMany(\App\Invoice::class)->where('status', 'open')->where('created_at', '<=', Carbon::now());
     }
 
     public function contacts()
     {
-        return $this->hasManyThrough('App\ContactInfo', 'App\Entity')->withTrashed();
+        return $this->hasManyThrough(\App\ContactInfo::class, \App\Entity::class)->withTrashed();
     }
 
     public function work_orders()
     {
-        return $this->hasManyThrough('App\WorkOrder', 'App\Job')->withTrashed();
+        return $this->hasManyThrough(\App\WorkOrder::class, \App\Job::class)->withTrashed();
     }
 
     public function getSearchStringAttribute()

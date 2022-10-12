@@ -53,11 +53,11 @@ class WorkOrderRecipient extends Model
 
     public function party()
     {
-        return $this->belongsTo('App\JobParty')->withTrashed();
+        return $this->belongsTo(\App\JobParty::class)->withTrashed();
     }
 
     public function work_order()
     {
-        return $this->belongsTo('App\WorkOrder', 'work_order_id');
+        return $this->belongsTo(\App\WorkOrder::class, 'work_order_id');
     }
 }

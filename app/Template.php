@@ -47,12 +47,12 @@ class Template extends Model
 
     public function type()
     {
-        return $this->belongsTo('App\WorkOrderType', 'type_slug', 'slug');
+        return $this->belongsTo(\App\WorkOrderType::class, 'type_slug', 'slug');
     }
 
     public function lines()
     {
-        return $this->hasMany('App\TemplateLine');
+        return $this->hasMany(\App\TemplateLine::class);
     }
 
     public function clientName()

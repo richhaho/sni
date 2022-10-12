@@ -53,7 +53,7 @@ class Note extends Model
 
     public function writer()
     {
-        return $this->belongsTo('App\User', 'entered_by');
+        return $this->belongsTo(\App\User::class, 'entered_by');
     }
 
     public function noteable()

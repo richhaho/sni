@@ -81,17 +81,17 @@ class JobParty extends Model
 
     public function contact()
     {
-        return $this->belongsTo('App\ContactInfo')->withTrashed();
+        return $this->belongsTo(\App\ContactInfo::class)->withTrashed();
     }
 
     public function firm()
     {
-        return $this->belongsTo('App\Entity', 'entity_id');
+        return $this->belongsTo(\App\Entity::class, 'entity_id');
     }
 
     public function job()
     {
-        return $this->belongsTo('App\Job');
+        return $this->belongsTo(\App\Job::class);
     }
 
     public function scopeOfType($query, $type)

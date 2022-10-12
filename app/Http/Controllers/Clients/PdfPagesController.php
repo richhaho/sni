@@ -1819,7 +1819,7 @@ class PdfPagesController extends Controller
         $wo = WorkOrder::findOrFail($id);
         /////////////////////////////////////////////////////////
         if ($request['loading'] == 'start') {
-            $attachment_file = $wo->attachments->where('attachable_type', 'App\WorkOrder')->where('file_mime', 'application/pdf');
+            $attachment_file = $wo->attachments->where('attachable_type', \App\WorkOrder::class)->where('file_mime', 'application/pdf');
             $attachment_files = [];
             foreach ($attachment_file as $att_file) {
                 if (substr($att_file->file_path, -3) != 'pdf') {
@@ -1836,7 +1836,7 @@ class PdfPagesController extends Controller
                 ];
             }
 
-            $attachment_file = $wo->job->attachments->where('attachable_type', 'App\Job')->where('file_mime', 'application/pdf');
+            $attachment_file = $wo->job->attachments->where('attachable_type', \App\Job::class)->where('file_mime', 'application/pdf');
             foreach ($attachment_file as $att_file) {
                 if (substr($att_file->file_path, -3) != 'pdf') {
                     continue;
@@ -1882,7 +1882,7 @@ class PdfPagesController extends Controller
         if ($request['attach_method'] == 'upload') {
             if ($request['file'] == null || $request['file'] == '') {
                 Session::flash('message', 'file is required.');
-                $attachment_file = $wo->attachments->where('attachable_type', 'App\WorkOrder')->where('file_mime', 'application/pdf');
+                $attachment_file = $wo->attachments->where('attachable_type', \App\WorkOrder::class)->where('file_mime', 'application/pdf');
                 $attachment_files = [];
                 foreach ($attachment_file as $att_file) {
                     if (substr($att_file->file_path, -3) != 'pdf') {
@@ -1899,7 +1899,7 @@ class PdfPagesController extends Controller
                     ];
                 }
 
-                $attachment_file = $wo->job->attachments->where('attachable_type', 'App\Job')->where('file_mime', 'application/pdf');
+                $attachment_file = $wo->job->attachments->where('attachable_type', \App\Job::class)->where('file_mime', 'application/pdf');
                 foreach ($attachment_file as $att_file) {
                     if (substr($att_file->file_path, -3) != 'pdf') {
                         continue;
@@ -2213,7 +2213,7 @@ class PdfPagesController extends Controller
                 $max_page_length = 0;
                 $work = WorkOrder::findOrFail($id);
 
-                $attachments = Attachment::where('attachable_type', 'App\WorkOrder')->where('attachable_id', $work->id)->where('type', 'generated')->get();
+                $attachments = Attachment::where('attachable_type', \App\WorkOrder::class)->where('attachable_id', $work->id)->where('type', 'generated')->get();
                 foreach ($attachments as $attch) {
                     Storage::delete($attch->file_path);
                     Storage::delete($attch->thumb_path);
@@ -2635,7 +2635,7 @@ class PdfPagesController extends Controller
                 $max_page_length = 0;
                 $work = WorkOrder::findOrFail($id);
 
-                $attachments = Attachment::where('attachable_type', 'App\WorkOrder')->where('attachable_id', $work->id)->where('type', 'generated')->get();
+                $attachments = Attachment::where('attachable_type', \App\WorkOrder::class)->where('attachable_id', $work->id)->where('type', 'generated')->get();
                 foreach ($attachments as $attch) {
                     Storage::delete($attch->file_path);
                     Storage::delete($attch->thumb_path);
@@ -3247,7 +3247,7 @@ class PdfPagesController extends Controller
             $max_page_length = 0;
             $work = WorkOrder::findOrFail($id);
 
-            $attachments = Attachment::where('attachable_type', 'App\WorkOrder')->where('attachable_id', $work->id)->where('type', 'generated')->get();
+            $attachments = Attachment::where('attachable_type', \App\WorkOrder::class)->where('attachable_id', $work->id)->where('type', 'generated')->get();
             foreach ($attachments as $attch) {
                 Storage::delete($attch->file_path);
                 Storage::delete($attch->thumb_path);

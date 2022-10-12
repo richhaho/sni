@@ -24,11 +24,11 @@ class MailingBatch extends Model
 {
     public function details()
     {
-        return $this->hasMany('App\BatchDetail', 'batch_id');
+        return $this->hasMany(\App\BatchDetail::class, 'batch_id');
     }
 
     public function attachments()
     {
-        return $this->morphMany('App\Attachment', 'attachable');
+        return $this->morphMany(\App\Attachment::class, 'attachable');
     }
 }

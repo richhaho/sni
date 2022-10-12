@@ -31,16 +31,16 @@ class BatchDetail extends Model
 {
     public function batch()
     {
-        return $this->belongsTo('App\MailingBatch', 'batch_id');
+        return $this->belongsTo(\App\MailingBatch::class, 'batch_id');
     }
 
     public function recipient()
     {
-        return $this->belongsTo('App\WorkOrderRecipient', 'work_order_recipient');
+        return $this->belongsTo(\App\WorkOrderRecipient::class, 'work_order_recipient');
     }
 
     public function attachment()
     {
-        return $this->belongsTo('App\Attachment');
+        return $this->belongsTo(\App\Attachment::class);
     }
 }

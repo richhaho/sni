@@ -57,7 +57,7 @@ class JobCloseWithRelease implements ShouldQueue
             $note->entered_at = $now->toDateTimeString();
             $note->entered_by = 1;
             $note->viewable = 1;
-            $note->noteable_type = 'App\Job';
+            $note->noteable_type = \App\Job::class;
             $note->client_id = $job->client->id;
             $note = $job->notes()->save($note);
 

@@ -45,17 +45,17 @@ class Invoice extends Model
 
     public function client()
     {
-        return $this->belongsTo('App\Client')->withTrashed();
+        return $this->belongsTo(\App\Client::class)->withTrashed();
     }
 
     public function work_order()
     {
-        return $this->belongsTo('App\WorkOrder')->withTrashed();
+        return $this->belongsTo(\App\WorkOrder::class)->withTrashed();
     }
 
     public function lines()
     {
-        return $this->hasMany('App\InvoiceLine');
+        return $this->hasMany(\App\InvoiceLine::class);
     }
 
     public function todos()
@@ -65,7 +65,7 @@ class Invoice extends Model
 
     public function PostageLines()
     {
-        return $this->hasMany('App\InvoiceLine')->where('description', 'LIKE', '%POSTAGE%');
+        return $this->hasMany(\App\InvoiceLine::class)->where('description', 'LIKE', '%POSTAGE%');
     }
 
     public function updateTotal()

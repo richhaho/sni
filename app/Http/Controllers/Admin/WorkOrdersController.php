@@ -609,7 +609,7 @@ class WorkOrdersController extends Controller
             $note->entered_at = $now->toDateTimeString();
             $note->entered_by = 1;
             $note->viewable = 0;
-            $note->noteable_type = 'App\Job';
+            $note->noteable_type = \App\Job::class;
             $note->client_id = $job->client->id;
             $note = $job->notes()->save($note);
         }
@@ -972,7 +972,7 @@ class WorkOrdersController extends Controller
                 $note->entered_at = $now->toDateTimeString();
                 $note->entered_by = 1;
                 $note->viewable = 1;
-                $note->noteable_type = 'App\WorkOrder';
+                $note->noteable_type = \App\WorkOrder::class;
                 $note->client_id = $client->id;
                 $work = $work->notes()->save($note);
             }

@@ -31,6 +31,6 @@ class JobPaymentHistory extends Model
 
     public function job()
     {
-        return $this->belongsTo('App\Job');
+        return $this->belongsTo(\App\Job::class);
     }
 }

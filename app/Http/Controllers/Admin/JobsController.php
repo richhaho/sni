@@ -961,7 +961,7 @@ class JobsController extends Controller
         $note->entered_at = $now->toDateTimeString();
         $note->entered_by = Auth::user()->id;
         $note->viewable = 0;
-        $note->noteable_type = 'App\Job';
+        $note->noteable_type = \App\Job::class;
         $note->client_id = $job->client->id;
         $note = $job->notes()->save($note);
 
@@ -1318,7 +1318,7 @@ class JobsController extends Controller
         $note->entered_at = $now->toDateTimeString();
         $note->entered_by = Auth::user()->id;
         $note->viewable = 0;
-        $note->noteable_type = 'App\Job';
+        $note->noteable_type = \App\Job::class;
         $note->client_id = $job->client->id;
         $note = $job->notes()->save($note);
 
@@ -1876,7 +1876,7 @@ class JobsController extends Controller
 
                 $new_attachment->attachable_id = $id;
                 $new_attachment->user_id = Auth::user()->id;
-                $new_attachment->attachable_type = 'App\Job';
+                $new_attachment->attachable_type = \App\Job::class;
                 $new_attachment->save();
 
                 $new_path = 'attachments/jobs/'.$id.'/attachment-'.$new_attachment->id.substr($new_attachment->file_path, -4);
@@ -1988,7 +1988,7 @@ class JobsController extends Controller
             $note->entered_at = $now->toDateTimeString();
             $note->entered_by = 1;
             $note->viewable = 1;
-            $note->noteable_type = 'App\Job';
+            $note->noteable_type = \App\Job::class;
             $note->client_id = $client->id;
             $note = $job->notes()->save($note);
         }

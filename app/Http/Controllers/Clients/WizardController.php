@@ -576,7 +576,7 @@ class WizardController extends Controller
                 $note->entered_at = $now->toDateTimeString();
                 $note->entered_by = Auth::user()->id;
                 $note->viewable = 1;
-                $note->noteable_type = 'App\Job';
+                $note->noteable_type = \App\Job::class;
                 $note->client_id = $job->client->id;
                 $note = $job->notes()->save($note);
             }
@@ -587,7 +587,7 @@ class WizardController extends Controller
                 $now = Carbon::now();
                 $note = Note::create();
                 $note->noteable_id = $wo->id;
-                $note->noteable_type = 'App\WorkOrder';
+                $note->noteable_type = \App\WorkOrder::class;
                 $note->client_id = $job->client->id;
                 $note->created_at = date('Y-m-d H:i:s', strtotime($now));
                 $note->note_text = 'This client has invoices past due.';
@@ -742,7 +742,7 @@ class WizardController extends Controller
             $note->entered_by = Auth::user()->id;
             $note->viewable = 0;
             $note->client_id = $job->client_id;
-            $note->noteable_type = 'App\Job';
+            $note->noteable_type = \App\Job::class;
             $note = $new_job->notes()->save($note);
 
             return $new_job->id;

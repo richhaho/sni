@@ -123,17 +123,17 @@ class Job extends Model
 
     public function client()
     {
-        return $this->belongsTo('App\Client')->withTrashed();
+        return $this->belongsTo(\App\Client::class)->withTrashed();
     }
 
     public function parties()
     {
-        return $this->hasMany('App\JobParty');
+        return $this->hasMany(\App\JobParty::class);
     }
 
     public function workorders()
     {
-        return $this->hasMany('App\WorkOrder')->withTrashed();
+        return $this->hasMany(\App\WorkOrder::class)->withTrashed();
     }
 
     public function firstWorkorder()
@@ -145,12 +145,12 @@ class Job extends Model
 
     public function attachments()
     {
-        return $this->morphMany('App\Attachment', 'attachable');
+        return $this->morphMany(\App\Attachment::class, 'attachable');
     }
 
     public function notes()
     {
-        return $this->morphMany('App\Note', 'noteable')->withTrashed();
+        return $this->morphMany(\App\Note::class, 'noteable')->withTrashed();
     }
 
     public function scopeOpen($query)
@@ -264,7 +264,7 @@ class Job extends Model
 
     public function payments()
     {
-        return $this->hasMany('App\JobPaymentHistory');
+        return $this->hasMany(\App\JobPaymentHistory::class);
     }
 
     public function coordinate()
@@ -274,7 +274,7 @@ class Job extends Model
 
     public function changes()
     {
-        return $this->hasMany('App\JobChangeOrder');
+        return $this->hasMany(\App\JobChangeOrder::class);
     }
 
     public function toSearchableArray()

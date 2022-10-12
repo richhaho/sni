@@ -37,7 +37,7 @@ class ContractTracker extends Model
 
     public function client()
     {
-        return $this->belongsTo('App\Client')->withTrashed();
+        return $this->belongsTo(\App\Client::class)->withTrashed();
     }
 
     public function job()

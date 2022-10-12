@@ -93,6 +93,6 @@ class Attachment extends Model
 
     public function recipient()
     {
-        return $this->belongsTo('App\WorkOrderRecipient', 'generated_id');
+        return $this->belongsTo(\App\WorkOrderRecipient::class, 'generated_id');
     }
 }

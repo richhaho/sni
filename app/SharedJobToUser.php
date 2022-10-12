@@ -27,11 +27,11 @@ class SharedJobToUser extends Model
 
     public function job()
     {
-        return $this->belongsTo('App\Job')->withTrashed();
+        return $this->belongsTo(\App\Job::class)->withTrashed();
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User')->withTrashed();
+        return $this->belongsTo(\App\User::class)->withTrashed();
     }
 }

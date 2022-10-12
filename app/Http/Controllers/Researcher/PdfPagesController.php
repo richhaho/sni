@@ -1496,7 +1496,7 @@ class PdfPagesController extends Controller
         ];
 
         $work = WorkOrder::findOrFail($id);
-        $attachments = Attachment::where('attachable_type', 'App\WorkOrder')->where('attachable_id', $work->id)->where('type', 'generated')->get();
+        $attachments = Attachment::where('attachable_type', \App\WorkOrder::class)->where('attachable_id', $work->id)->where('type', 'generated')->get();
         foreach ($attachments as $attch) {
             Storage::delete($attch->file_path);
             Storage::delete($attch->thumb_path);

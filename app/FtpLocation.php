@@ -31,6 +31,6 @@ class FtpLocation extends Model
 
     public function server()
     {
-        return $this->belongsTo('\App\FtpConnection', 'connection_id');
+        return $this->belongsTo(\App\FtpConnection::class, 'connection_id');
     }
 }

@@ -27,6 +27,6 @@ class PdfPage extends Model
 {
     public function work_order()
     {
-        return $this->belongsTo('App\WorkOrder');
+        return $this->belongsTo(\App\WorkOrder::class);
     }
 }

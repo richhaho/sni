@@ -123,6 +123,6 @@ class User extends Authenticatable
 
     public function client()
     {
-        return $this->belongsTo('App\Client');
+        return $this->belongsTo(\App\Client::class);
     }
 }
