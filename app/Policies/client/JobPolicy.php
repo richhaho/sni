@@ -2,9 +2,8 @@
 
 namespace App\Policies\client;
 
-use App\User;
 use App\Job;
-
+use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class JobPolicy
@@ -22,8 +21,6 @@ class JobPolicy
     {
         return $user->client->id === $job->client_id;
     }
-    
-
 
     /**
      * Determine whether the user can create jobs.

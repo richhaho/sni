@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-
+use App\Client;
 use App\Http\Controllers\Controller;
-use Auth;
+use App\Mail\SendReminder;
+use App\Reminders;
 use Illuminate\Http\Request;
-use Imagick;
+use Mail;
 use Response;
 use Session;
 use Storage;
 
-use App\Reminders;
-
-use App\Client;
-use Mail;
-use App\Mail\SendReminder;
-
 class RemindersController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,20 +25,20 @@ class RemindersController extends Controller
      */
     public function index(Request $request)
     {
-       $reminder =Reminders::query();
-       $reminder= $reminder->orderBy('reminder_name')->paginate(10);
-       $period=[
-                    'Daily'=>'Day(s)',
-                    'Weekly'=>'Week(s)',
-                    'Monthly'=>'Month(s)'    
-                ];
-       $data = [
-           'reminder' => $reminder,
-           'period' => $period,
+        $reminder = Reminders::query();
+        $reminder = $reminder->orderBy('reminder_name')->paginate(10);
+        $period = [
+            'Daily' => 'Day(s)',
+            'Weekly' => 'Week(s)',
+            'Monthly' => 'Month(s)',
+        ];
+        $data = [
+            'reminder' => $reminder,
+            'period' => $period,
 
-       ];
-        
-       return view('admin.reminders.index',$data);
+        ];
+
+        return view('admin.reminders.index', $data);
     }
 
     /**
@@ -53,15 +48,16 @@ class RemindersController extends Controller
      */
     public function create(Request $request)
     {
-        $period=[
-                    'Daily'=>'Day(s)',
-                    'Weekly'=>'Week(s)',
-                    'Monthly'=>'Month(s)'    
-                ];
-        $data=[
-            'period'=>$period
+        $period = [
+            'Daily' => 'Day(s)',
+            'Weekly' => 'Week(s)',
+            'Monthly' => 'Month(s)',
         ];
-        return view('admin.reminders.create',$data);
+        $data = [
+            'period' => $period,
+        ];
+
+        return view('admin.reminders.create', $data);
     }
 
     /**
@@ -73,34 +69,40 @@ class RemindersController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'reminder_name' => 'required'
-        ]); 
-        $now=date('Y-m-d H:i:s',strtotime(\Carbon\Carbon::now()));
-        $first_send_date=date('Y-m-d H:i:s',strtotime($request['first_send_date']));
+            'reminder_name' => 'required',
+        ]);
+        $now = date('Y-m-d H:i:s', strtotime(\Carbon\Carbon::now()));
+        $first_send_date = date('Y-m-d H:i:s', strtotime($request['first_send_date']));
 
-        if($now>=$first_send_date){
+        if ($now >= $first_send_date) {
             Session::flash('message', 'First Send Date/Time must be future than current time. Please pick another Date/Time.');
+
             return redirect()->route('reminders.create');
         }
 
-        if ($request['status']) {$status=1;}else{$status=0;}
-        $data=[
-            'reminder_name'=>$request['reminder_name'],
-            'email_subject'=>$request['email_subject'],
-            'email_message'=>$request['email_message'],
-            'sms_message'=>$request['sms_message'],
-            'status'=>$status,
-            'first_send_date'=>date('Y-m-d H:i:s',strtotime($request['first_send_date'])),
-            'period'=>$request['period'],
-            'send_frequency'=>$request['send_frequency'],
+        if ($request['status']) {
+            $status = 1;
+        } else {
+            $status = 0;
+        }
+        $data = [
+            'reminder_name' => $request['reminder_name'],
+            'email_subject' => $request['email_subject'],
+            'email_message' => $request['email_message'],
+            'sms_message' => $request['sms_message'],
+            'status' => $status,
+            'first_send_date' => date('Y-m-d H:i:s', strtotime($request['first_send_date'])),
+            'period' => $request['period'],
+            'send_frequency' => $request['send_frequency'],
         ];
-        $reminder =  Reminders::create( $data);
-        $reminder->period=$request['period'];
-        $reminder->end_send_date=null;
-        $reminder->next_send_date=$reminder->first_send_date;
+        $reminder = Reminders::create($data);
+        $reminder->period = $request['period'];
+        $reminder->end_send_date = null;
+        $reminder->next_send_date = $reminder->first_send_date;
         $reminder->save();
 
         Session::flash('message', 'New Reminder created.');
+
         return redirect()->route('reminders.index');
     }
 
@@ -112,19 +114,14 @@ class RemindersController extends Controller
      */
     public function show($id)
     {
-       
     }
-    
-    
-     
-    
-     /**
+
+    /**
      * Display the document.
      *
      * @param  int  $id
      * @return Response
      */
-    
 
     /**
      * Show the form for editing the specified resource.
@@ -134,22 +131,23 @@ class RemindersController extends Controller
      */
     public function edit($id)
     {
-        $reminder=Reminders::where('id',$id)->first();
-        if (count($reminder)==0){
+        $reminder = Reminders::where('id', $id)->first();
+        if (count($reminder) == 0) {
             Session::flash('message', 'This Reminder has been deleted already.');
+
             return redirect()->route('reminders.index');
         }
-        $period=[
-                    'Daily'=>'Day(s)',
-                    'Weekly'=>'Week(s)',
-                    'Monthly'=>'Month(s)'    
-                ];
+        $period = [
+            'Daily' => 'Day(s)',
+            'Weekly' => 'Week(s)',
+            'Monthly' => 'Month(s)',
+        ];
         $data = [
             'reminder' => $reminder,
             'period' => $period,
         ];
-        
-        return view('admin.reminders.edit',$data);
+
+        return view('admin.reminders.edit', $data);
     }
 
     /**
@@ -162,42 +160,46 @@ class RemindersController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'reminder_name' => 'required'
-        ]); 
-        $now=date('Y-m-d H:i:s',strtotime(\Carbon\Carbon::now()));
+            'reminder_name' => 'required',
+        ]);
+        $now = date('Y-m-d H:i:s', strtotime(\Carbon\Carbon::now()));
 
-        $first_time=strtotime($request['first_send_date']);
-        $first_send_date=date('Y-m-d H:i:s',$first_time);
-        if($now>=$first_send_date){
+        $first_time = strtotime($request['first_send_date']);
+        $first_send_date = date('Y-m-d H:i:s', $first_time);
+        if ($now >= $first_send_date) {
             Session::flash('message', 'First Send Date/Time must be future than current time. Please pick another Date/Time.');
-            return redirect()->route('reminders.edit',$id);
+
+            return redirect()->route('reminders.edit', $id);
         }
 
-
-        $reminder=Reminders::where('id',$id)->first();
-        if ($request['status']) {$status=1;}else{$status=0;}
-        $data=[
-            'reminder_name'=>$request['reminder_name'],
-            'email_subject'=>$request['email_subject'],
-            'email_message'=>$request['email_message'],
-            'sms_message'=>$request['sms_message'],
-            'status'=>$status,
-            'first_send_date'=>$first_send_date,
-            'send_frequency'=>$request['send_frequency'],
+        $reminder = Reminders::where('id', $id)->first();
+        if ($request['status']) {
+            $status = 1;
+        } else {
+            $status = 0;
+        }
+        $data = [
+            'reminder_name' => $request['reminder_name'],
+            'email_subject' => $request['email_subject'],
+            'email_message' => $request['email_message'],
+            'sms_message' => $request['sms_message'],
+            'status' => $status,
+            'first_send_date' => $first_send_date,
+            'send_frequency' => $request['send_frequency'],
         ];
         $reminder->update($data);
-        $reminder->period=$request['period'];
+        $reminder->period = $request['period'];
 
-        $reminder->end_send_date=null;
-        $reminder->next_send_date=$reminder->first_send_date;
+        $reminder->end_send_date = null;
+        $reminder->next_send_date = $reminder->first_send_date;
         $reminder->save();
 
         // $client=Client::findOrFail('100024');
         // Mail::to('richhaho@gmail.com')->send(new SendReminder($client, "This is a test email."));
 
         Session::flash('message', 'New Reminder Updated.');
+
         return redirect()->route('reminders.index');
-       
     }
 
     /**
@@ -210,33 +212,30 @@ class RemindersController extends Controller
     {
         $reminder = Reminders::findOrFail($id);
         $reminder->delete();
-    
-        Session::flash('message', 'Reminder (' .$reminder->reminder_name . ') successfully deleted.');
-        
+
+        Session::flash('message', 'Reminder ('.$reminder->reminder_name.') successfully deleted.');
+
         return redirect()->route('reminders.index');
-        
     }
-    
-    
-     
-    public function setfilter (Request $request) {
-     
-         if ($request->has('work_type')) {
-            if($request->work_type == "all" ) {
+
+    public function setfilter(Request $request)
+    {
+        if ($request->has('work_type')) {
+            if ($request->work_type == 'all') {
                 session()->forget('work_order_field.work_type');
             } else {
                 session(['work_order_field.work_type' => $request->work_type]);
             }
         }
-       
+
         return redirect()->route('workorderfields.index');
     }
-    
-    
-    public function resetfilter (Request $request) {
+
+    public function resetfilter(Request $request)
+    {
         return 'dfgdfgdf';
         session()->forget('work_order_field');
+
         return redirect()->route('workorderfields.index');
     }
-    
 }

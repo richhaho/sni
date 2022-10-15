@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $ta_token
  * @property string|null $payeezy_mode
  * @property-read mixed $url
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CompanySetting whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CompanySetting whereApikey($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\CompanySetting whereApisecret($value)
@@ -35,21 +36,23 @@ use Illuminate\Database\Eloquent\Model;
 class CompanySetting extends Model
 {
     //
-    protected $fillable = ['name','address','apikey','apisecret','merchant_token','js_security_key','ta_token'];
-    
-    public function getApiurlAttribute() {
-        if($this->payeezy_mode == 'live') {
+    protected $fillable = ['name', 'address', 'apikey', 'apisecret', 'merchant_token', 'js_security_key', 'ta_token'];
+
+    public function getApiurlAttribute()
+    {
+        if ($this->payeezy_mode == 'live') {
             return 'prod.api.firstdata.com';
         } else {
             return 'cert.api.firstdata.com';
         }
     }
-    public function getUrlAttribute() {
-        if($this->payeezy_mode == 'live') {
+
+    public function getUrlAttribute()
+    {
+        if ($this->payeezy_mode == 'live') {
             return 'api.payeezy.com';
         } else {
             return 'api-cert.payeezy.com';
         }
     }
-
 }

@@ -4,12 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 /**
  * App\WorkOrderType
  *
  * @property string $slug
  * @property string $name
  * @property string|null $deleted_at
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\WorkOrderType onlyTrashed()
  * @method static bool|null restore()
@@ -22,14 +24,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class WorkOrderType extends Model
 {
-    
     use SoftDeletes;
-    public $timestamps = false; 
-        /**
-     * primaryKey 
-     * 
-     * @var integer
-     * @access protected
+
+    public $timestamps = false;
+
+    /**
+     * primaryKey
+     *
+     * @var int
      */
     protected $primaryKey = 'slug';
 
@@ -42,7 +44,6 @@ class WorkOrderType extends Model
 
     public function template()
     {
-        return $this->hasOne('App\Template','type_slug','slug');
+        return $this->hasOne(\App\Template::class, 'type_slug', 'slug');
     }
-
 }

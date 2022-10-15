@@ -1,4 +1,6 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Zizaco\Entrust\EntrustRole;
 
@@ -14,6 +16,7 @@ use Zizaco\Entrust\EntrustRole;
  * @property string|null $type
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Permission[] $perms
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Role whereDisplayName($value)
@@ -25,5 +28,5 @@ use Zizaco\Entrust\EntrustRole;
  */
 class Role extends EntrustRole
 {
-     protected $fillable = ['name','display_name','type','description'];
+    protected $fillable = ['name', 'display_name', 'type', 'description'];
 }

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddCountyFieldToClients extends Migration
 {
@@ -14,7 +14,7 @@ class AddCountyFieldToClients extends Migration
     public function up()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('county',200)->nullable()->after('city');
+            $table->string('county', 200)->nullable()->after('city');
         });
     }
 
@@ -26,7 +26,7 @@ class AddCountyFieldToClients extends Migration
     public function down()
     {
         Schema::table('clients', function (Blueprint $table) {
-           $table->dropCoulmn('county');
+            $table->dropCoulmn('county');
         });
     }
 }

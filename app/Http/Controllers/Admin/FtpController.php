@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\FtpLocation;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Session;
 
 class FtpController extends Controller
@@ -17,13 +17,13 @@ class FtpController extends Controller
     public function index()
     {
         $paths = FtpLocation::orderBy('connection_id')->get();
-        $servers = \App\FtpConnection::all()->pluck('ftp_name','id')->toArray();
+        $servers = \App\FtpConnection::all()->pluck('ftp_name', 'id')->toArray();
         $data = [
             'servers' => $servers,
-            'paths' => $paths
+            'paths' => $paths,
         ];
-        
-        return view('admin.ftp.index',$data);
+
+        return view('admin.ftp.index', $data);
     }
 
     /**
@@ -48,13 +48,12 @@ class FtpController extends Controller
             'name' => 'required',
             'path' => 'required',
         ]);
-        
-        
-        
+
         $path = FtpLocation::create($request->all());
-        
+
         Session::flash('message', 'Successfully added FTP Location');
-       return redirect()->route('ftp.index');
+
+        return redirect()->route('ftp.index');
     }
 
     /**
@@ -100,11 +99,11 @@ class FtpController extends Controller
     public function destroy($id)
     {
         $path = FtpLocation::findOrFail($id);
-        
+
         $path->delete();
-        
+
         Session::flash('message', 'Successfully deleted FTP Location');
-       return redirect()->route('ftp.index');
-                
+
+        return redirect()->route('ftp.index');
     }
 }

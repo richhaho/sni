@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddNocNumberToJobsTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddNocNumberToJobsTable extends Migration
     public function up()
     {
         Schema::table('jobs', function (Blueprint $table) {
-            $table->string('noc_number',50)->nullable()->after('number');
+            $table->string('noc_number', 50)->nullable()->after('number');
         });
     }
 
@@ -26,7 +26,7 @@ class AddNocNumberToJobsTable extends Migration
     public function down()
     {
         Schema::table('jobs', function (Blueprint $table) {
-             $table->dropColumn('noc_number');
+            $table->dropColumn('noc_number');
         });
     }
 }

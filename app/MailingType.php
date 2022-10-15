@@ -10,6 +10,6 @@ class MailingType extends Model
         'type',
         'postage',
         'fee',
-        'stc'
+        'stc',
     ];
 }

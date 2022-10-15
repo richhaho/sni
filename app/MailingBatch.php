@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Attachment[] $attachments
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\BatchDetail[] $details
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MailingBatch whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MailingBatch whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\MailingBatch whereUpdatedAt($value)
@@ -23,11 +24,11 @@ class MailingBatch extends Model
 {
     public function details()
     {
-        return $this->hasMany('App\BatchDetail','batch_id');
+        return $this->hasMany(\App\BatchDetail::class, 'batch_id');
     }
-    
+
     public function attachments()
     {
-        return $this->morphMany('App\Attachment', 'attachable');
+        return $this->morphMany(\App\Attachment::class, 'attachable');
     }
 }

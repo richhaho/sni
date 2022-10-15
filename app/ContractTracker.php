@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property \Carbon\Carbon|null $deleted_at
  * @property-read \App\Client $client
-  * @mixin \Eloquent
+ * @mixin \Eloquent
  */
 class ContractTracker extends Model
 {
@@ -30,14 +30,14 @@ class ContractTracker extends Model
         'file_extension',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
     ];
 
-    protected $table='contract_trackers';
-    
+    protected $table = 'contract_trackers';
+
     public function client()
     {
-        return $this->belongsTo('App\Client')->withTrashed();
+        return $this->belongsTo(\App\Client::class)->withTrashed();
     }
 
     public function job()

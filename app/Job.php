@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 
-
 /**
  * App\Job
  *
@@ -58,6 +57,7 @@ use Laravel\Scout\Searchable;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\JobParty[] $parties
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\JobPaymentHistory[] $payments
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\WorkOrder[] $workorders
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Job onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Job open()
@@ -109,173 +109,174 @@ class Job extends Model
     //
     use Searchable;
     use SoftDeletes;
-    protected $dates = ['started_at','last_day', 'research_complete', 'research_start'];
-    protected $fillable = ['type','client_id','number', 'project_number','noc_number',
-        'name','address_source','address_1','address_2','address_corner','city',
-        'county','state','zip', 'country', 'started_at','last_day','status', 
-        'contract_amount','interest_rate','default_materials','legal_description', 'legal_description_source',
-        'folio_number','private_type','is_mall_unit','is_tenant','is_condo',
-        'association_name','a_unit_number','mall_name','m_unit_number','coordinate_id', 'research_complete', 'research_start', 'notify_email'];
+
+    protected $dates = ['started_at', 'last_day', 'research_complete', 'research_start'];
+
+    protected $fillable = ['type', 'client_id', 'number', 'project_number', 'noc_number',
+        'name', 'address_source', 'address_1', 'address_2', 'address_corner', 'city',
+        'county', 'state', 'zip', 'country', 'started_at', 'last_day', 'status',
+        'contract_amount', 'interest_rate', 'default_materials', 'legal_description', 'legal_description_source',
+        'folio_number', 'private_type', 'is_mall_unit', 'is_tenant', 'is_condo',
+        'association_name', 'a_unit_number', 'mall_name', 'm_unit_number', 'coordinate_id', 'research_complete', 'research_start', 'notify_email', ];
 
     protected $appends = ['full_address'];
-        
-    public function client() {
-        return $this->belongsTo('App\Client')->withTrashed();;
-    }
-    
 
-    
+    public function client()
+    {
+        return $this->belongsTo(\App\Client::class)->withTrashed();
+    }
+
     public function parties()
     {
-        return $this->hasMany('App\JobParty');
+        return $this->hasMany(\App\JobParty::class);
     }
-    
-     public function workorders()
+
+    public function workorders()
     {
-        return $this->hasMany('App\WorkOrder')->withTrashed();
+        return $this->hasMany(\App\WorkOrder::class)->withTrashed();
     }
 
     public function firstWorkorder()
     {
-        return $this->workorders()->where('type', 'notice-to-owner')->where(function($q) {
+        return $this->workorders()->where('type', 'notice-to-owner')->where(function ($q) {
             $q->where('service', null)->orwhere('service', 'full');
-        })->where('deleted_at', null)->where('status','open')->first();
+        })->where('deleted_at', null)->where('status', 'open')->first();
     }
-    
-    
+
     public function attachments()
     {
-        return $this->morphMany('App\Attachment', 'attachable');
+        return $this->morphMany(\App\Attachment::class, 'attachable');
     }
-    
+
     public function notes()
     {
-        return $this->morphMany('App\Note', 'noteable')->withTrashed();
+        return $this->morphMany(\App\Note::class, 'noteable')->withTrashed();
     }
-    
-    public function scopeOpen($query) {
-        return $query->where('status','!=','closed')->orwhereNull('status');
-    }
-    
-    public function getFullAddressAttribute() {
-        if (strlen(trim($this->address_1)) == 0 && strlen($this->address_2)==0) {
-             $lines[] =($this->address_corner);
-             $line2 = array();
-             if(strlen($this->city) > 0) {
-                $line2[] = $this->city;
-            }
-            if(strlen($this->state) > 0) {
-                $line2[] = strtoupper($this->state);
-            }
-            if(strlen($this->zip) > 0) {
-                $line2[] = $this->zip;
-            }
-            
-            $lines[] = implode(' ',$line2);
-            $xaddress = implode('<br>',$lines);
-         } else {
-            if(strlen($this->address_1) > 0) {
-               $lines[] = $this->address_1;
-            }
-            if(strlen($this->address_2) > 0) {
-               $lines[] = $this->address_2;
-            }
-            $line2 = array();
 
-            if(strlen($this->city) > 0) {
+    public function scopeOpen($query)
+    {
+        return $query->where('status', '!=', 'closed')->orwhereNull('status');
+    }
+
+    public function getFullAddressAttribute()
+    {
+        if (strlen(trim($this->address_1)) == 0 && strlen($this->address_2) == 0) {
+            $lines[] = ($this->address_corner);
+            $line2 = [];
+            if (strlen($this->city) > 0) {
                 $line2[] = $this->city;
             }
-            if(strlen($this->state) > 0) {
+            if (strlen($this->state) > 0) {
                 $line2[] = strtoupper($this->state);
             }
-            if(strlen($this->zip) > 0) {
+            if (strlen($this->zip) > 0) {
                 $line2[] = $this->zip;
             }
-            $lines[] = implode(' ',$line2);
-            if(strlen($this->country) > 0) {
-               if (strtoupper($this->country) =='UNITED STATES') {
-                
-                }else {
+
+            $lines[] = implode(' ', $line2);
+            $xaddress = implode('<br>', $lines);
+        } else {
+            if (strlen($this->address_1) > 0) {
+                $lines[] = $this->address_1;
+            }
+            if (strlen($this->address_2) > 0) {
+                $lines[] = $this->address_2;
+            }
+            $line2 = [];
+
+            if (strlen($this->city) > 0) {
+                $line2[] = $this->city;
+            }
+            if (strlen($this->state) > 0) {
+                $line2[] = strtoupper($this->state);
+            }
+            if (strlen($this->zip) > 0) {
+                $line2[] = $this->zip;
+            }
+            $lines[] = implode(' ', $line2);
+            if (strlen($this->country) > 0) {
+                if (strtoupper($this->country) == 'UNITED STATES') {
+                } else {
                     $lines[] = $this->country;
                 }
-            }   
-            $xaddress = implode('<br>',$lines);
-         }
-        
+            }
+            $xaddress = implode('<br>', $lines);
+        }
+
         return trim($xaddress);
-        
     }
-    
-        public function getFullAddressNoCountryAttribute() {
-            
-         if (strlen($this->address_1) == 0 && strlen($this->address_2) == 0) {
-             $lines[] =($this->address_corner);
-              $line2 = array();
-              if(strlen($this->city) > 0) {
+
+    public function getFullAddressNoCountryAttribute()
+    {
+        if (strlen($this->address_1) == 0 && strlen($this->address_2) == 0) {
+            $lines[] = ($this->address_corner);
+            $line2 = [];
+            if (strlen($this->city) > 0) {
                 $line2[] = $this->city;
             }
-            if(strlen($this->state) > 0) {
+            if (strlen($this->state) > 0) {
                 $line2[] = strtoupper($this->state);
             }
-            if(strlen($this->zip) > 0) {
+            if (strlen($this->zip) > 0) {
                 $line2[] = $this->zip;
             }
-            
-            $lines[] = implode(' ',$line2);
-            $xaddress = implode('<br>',$lines);
-         } else {
-            if(strlen($this->address_1) > 0) {
-               $lines[] = $this->address_1;
+
+            $lines[] = implode(' ', $line2);
+            $xaddress = implode('<br>', $lines);
+        } else {
+            if (strlen($this->address_1) > 0) {
+                $lines[] = $this->address_1;
             }
-            if(strlen($this->address_2) > 0) {
-               $lines[] = $this->address_2;
+            if (strlen($this->address_2) > 0) {
+                $lines[] = $this->address_2;
             }
-            
-             if(strlen($this->address_corner) > 0) {
+
+            if (strlen($this->address_corner) > 0) {
                 $lines[] = $this->address_corner;
-             }
-            $line2 = array();
-            if(strlen($this->city) > 0) {
+            }
+            $line2 = [];
+            if (strlen($this->city) > 0) {
                 $line2[] = $this->city;
             }
-            if(strlen($this->state) > 0) {
+            if (strlen($this->state) > 0) {
                 $line2[] = strtoupper($this->state);
             }
-            if(strlen($this->zip) > 0) {
+            if (strlen($this->zip) > 0) {
                 $line2[] = $this->zip;
             }
-            $lines[] = implode(' ',$line2);
+            $lines[] = implode(' ', $line2);
 
-            $xaddress = implode('<br>',$lines);
-         }
-        
+            $xaddress = implode('<br>', $lines);
+        }
+
         return trim($xaddress);
-        
     }
 
-    public function getLegalDescriptionAttribute($value) {
-        return str_replace(chr(13),"",$value);
+    public function getLegalDescriptionAttribute($value)
+    {
+        return str_replace(chr(13), '', $value);
     }
 
-    
-    public function getSearchStringAttribute() {
+    public function getSearchStringAttribute()
+    {
         return str_replace('<br>', ' - ', $this->full_address);
     }
-    
+
     public function payments()
     {
-        return $this->hasMany('App\JobPaymentHistory');
+        return $this->hasMany(\App\JobPaymentHistory::class);
     }
+
     public function coordinate()
     {
         return Coordinate::where('id', $this->coordinate_id)->first();
     }
-    
+
     public function changes()
     {
-        return $this->hasMany('App\JobChangeOrder');
+        return $this->hasMany(\App\JobChangeOrder::class);
     }
-    
+
     public function toSearchableArray()
     {
         $array = $this->toArray();
@@ -300,60 +301,69 @@ class Job extends Model
         unset($array['a_unit_number']);
         unset($array['mall_name']);
         unset($array['m_unit_number']);
+
         return $array;
     }
 
     public static function scopeSearchByKeyword($query, $keyword)
     {
-        if ($keyword!='') {
+        if ($keyword != '') {
             $query->where(function ($query) use ($keyword) {
-                $query->where("name", "LIKE","%$keyword%")
-                    ->orWhere("address_source", "LIKE", "%$keyword%")
-                    ->orWhere("address_corner", "LIKE", "%$keyword%")
-                    ->orWhere("address_1", "LIKE", "%$keyword%")
-                    ->orWhere("address_2", "LIKE", "%$keyword%")
-                    ->orWhere("state", "LIKE", "%$keyword%")
-                    ->orWhere("city", "LIKE", "%$keyword%")
-                    ->orWhere("county", "LIKE", "%$keyword%")
-                    ->orWhere("country", "LIKE", "%$keyword%")
-                    ->orWhere("default_materials", "LIKE", "%$keyword%")
-                    ->orWhere("legal_description", "LIKE", "%$keyword%");
+                $query->where('name', 'LIKE', "%$keyword%")
+                    ->orWhere('address_source', 'LIKE', "%$keyword%")
+                    ->orWhere('address_corner', 'LIKE', "%$keyword%")
+                    ->orWhere('address_1', 'LIKE', "%$keyword%")
+                    ->orWhere('address_2', 'LIKE', "%$keyword%")
+                    ->orWhere('state', 'LIKE', "%$keyword%")
+                    ->orWhere('city', 'LIKE', "%$keyword%")
+                    ->orWhere('county', 'LIKE', "%$keyword%")
+                    ->orWhere('country', 'LIKE', "%$keyword%")
+                    ->orWhere('default_materials', 'LIKE', "%$keyword%")
+                    ->orWhere('legal_description', 'LIKE', "%$keyword%");
             });
         }
+
         return $query;
     }
-    
+
     public function getChanges($data)
     {
-        $fields = ['type','client_id','number', 'project_number','noc_number',
-        'name','address_source','address_1','address_2','address_corner','city',
-        'county','state','zip', 'country', 'started_at','last_day','status', 
-        'contract_amount','interest_rate','default_materials','legal_description',
-        'folio_number','private_type','is_mall_unit','is_tenant','is_condo',
-        'association_name','a_unit_number','mall_name','m_unit_number','coordinate_id', 'research_complete', 'research_start'];
+        $fields = ['type', 'client_id', 'number', 'project_number', 'noc_number',
+            'name', 'address_source', 'address_1', 'address_2', 'address_corner', 'city',
+            'county', 'state', 'zip', 'country', 'started_at', 'last_day', 'status',
+            'contract_amount', 'interest_rate', 'default_materials', 'legal_description',
+            'folio_number', 'private_type', 'is_mall_unit', 'is_tenant', 'is_condo',
+            'association_name', 'a_unit_number', 'mall_name', 'm_unit_number', 'coordinate_id', 'research_complete', 'research_start', ];
         $thisArray = $this->toArray();
 
-        $changes = array();
-        foreach($fields as $field) {
-            if (!isset($data[$field])) continue;
+        $changes = [];
+        foreach ($fields as $field) {
+            if (! isset($data[$field])) {
+                continue;
+            }
             if ($data[$field] != $thisArray[$field]) {
                 if (($field == 'started_at' || $field == 'last_day') && $thisArray[$field]) {
-                    if (substr($thisArray[$field], 0, 10) == $data[$field]) continue;
+                    if (substr($thisArray[$field], 0, 10) == $data[$field]) {
+                        continue;
+                    }
                 }
                 $change['field'] = $field;
                 $change['old'] = $thisArray[$field];
                 $change['new'] = $data[$field];
-                $changes[]= $change;
+                $changes[] = $change;
             }
         }
+
         return $changes;
     }
 
-    public function reminders() {
+    public function reminders()
+    {
         return JobReminders::where('job_id', $this->id)->where('deleted_at', null);
     }
 
-    public function nocs() {
+    public function nocs()
+    {
         if ($this->noc_number) {
             $noc = JobNoc::where('job_id', $this->id)->where('noc_number', $this->noc_number)->first();
             if (empty($noc)) {
@@ -361,31 +371,36 @@ class Job extends Model
                     'job_id' => $this->id,
                     'noc_number' => $this->noc_number,
                     'recorded_at' => date('Y-m-d H:i:s'),
-                    'expired_at' => date('Y-m-d H:i:s', strtotime('+1 year'))
+                    'expired_at' => date('Y-m-d H:i:s', strtotime('+1 year')),
                 ]);
             }
         }
+
         return JobNoc::where('job_id', $this->id);
     }
-    
-    public function balance() {
+
+    public function balance()
+    {
         $balance = $this->contract_amount;
-        foreach($this->changes as $change) {
-            $balance+=$change->amount;
+        foreach ($this->changes as $change) {
+            $balance += $change->amount;
         }
-        foreach($this->payments as $pay) {
-            $balance=$balance - $pay->amount;
+        foreach ($this->payments as $pay) {
+            $balance = $balance - $pay->amount;
         }
+
         return $balance;
     }
-    
-    public function linked_jobs() {
+
+    public function linked_jobs()
+    {
         return Job::where('linked_to', $this->id)->where('deleted_at', null);
     }
 
     public function sharedUsers()
     {
         $userIds = SharedJobToUser::where('job_id', $this->id)->get()->pluck('user_id')->toArray();
+
         return User::whereIn('id', $userIds)->get();
     }
 
@@ -393,5 +408,4 @@ class Job extends Model
     {
         return implode(', ', $this->sharedUsers()->pluck('full_name')->toArray());
     }
-
 }

@@ -1,16 +1,16 @@
 <?php
 
 namespace App\Notifications;
+
 use App\Job;
-use App\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class ShareJobSelectedOnWorkorderCreation extends Notification
 {
     use Queueable;
+
     protected $job;
 
     /**
@@ -20,7 +20,7 @@ class ShareJobSelectedOnWorkorderCreation extends Notification
      */
     public function __construct(Job $job)
     {
-       $this->job =$job;
+        $this->job = $job;
     }
 
     /**
@@ -49,13 +49,14 @@ class ShareJobSelectedOnWorkorderCreation extends Notification
             $fromEmail = $from->from_email;
             $fromName = $from->from_name;
         }
+
         return (new MailMessage)
                 ->from($fromEmail, $fromName)
-                ->subject("New Work Order on Shared Job")
-                ->line("The job owner has created a new work order on the below job.")
-                ->line("Job name: ". $this->job->name)
-                ->line("You can check the job summary by clicking below button.")
-                ->action('View Job Summary', url('/client/jobs_shared/'. $this->job->id.'/summary/'))
+                ->subject('New Work Order on Shared Job')
+                ->line('The job owner has created a new work order on the below job.')
+                ->line('Job name: '.$this->job->name)
+                ->line('You can check the job summary by clicking below button.')
+                ->action('View Job Summary', url('/client/jobs_shared/'.$this->job->id.'/summary/'))
                 ->line('Thank you for using Sunshine Notices!');
     }
 

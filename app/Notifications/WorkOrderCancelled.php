@@ -2,29 +2,33 @@
 
 namespace App\Notifications;
 
+use App\User;
+use App\WorkOrder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use App\WorkOrder;
-use App\User;
+use Illuminate\Notifications\Notification;
 
 class WorkOrderCancelled extends Notification implements ShouldQueue
 {
     use Queueable;
+
     protected $work_order;
+
     protected $user;
+
     protected $role;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(WorkOrder $work_order, User $user,$role)
+    public function __construct(WorkOrder $work_order, User $user, $role)
     {
-       $this->work_order = $work_order;
-       $this->user = $user;
-       $this->role=$role;
+        $this->work_order = $work_order;
+        $this->user = $user;
+        $this->role = $role;
     }
 
     /**
@@ -54,19 +58,18 @@ class WorkOrderCancelled extends Notification implements ShouldQueue
             $fromName = $from->from_name;
         }
 
-        if ($this->role=='admin'){
+        if ($this->role == 'admin') {
             return (new MailMessage)
                     ->from($fromEmail, $fromName)
-                    ->line($this ->user->full_name .' has cancelled work order number: ' . $this->work_order->number)
-                    ->action('Confirm Cancellation', route('workorders.edit',$this->work_order->id))
+                    ->line($this->user->full_name.' has cancelled work order number: '.$this->work_order->number)
+                    ->action('Confirm Cancellation', route('workorders.edit', $this->work_order->id))
                     ->line('Thank you for using Sunshine Notices!');
-        }else{
+        } else {
             return (new MailMessage)
                     ->from($fromEmail, $fromName)
-                    ->line($this ->user->full_name .' has cancelled work order number: ' . $this->work_order->number)
-                    ->action('View Cancelled Work Order', route('client.notices.edit',$this->work_order->id))
+                    ->line($this->user->full_name.' has cancelled work order number: '.$this->work_order->number)
+                    ->action('View Cancelled Work Order', route('client.notices.edit', $this->work_order->id))
                     ->line('Thank you for using Sunshine Notices!');
-
         }
     }
 

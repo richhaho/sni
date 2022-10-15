@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\FtpConnection;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Session;
 
 class FtpServerController extends Controller
@@ -17,12 +17,12 @@ class FtpServerController extends Controller
     public function index()
     {
         $servers = FtpConnection::all();
-        
+
         $data = [
-            'servers' => $servers
+            'servers' => $servers,
         ];
-        
-        return view('researcher.ftpservers.index',$data);
+
+        return view('researcher.ftpservers.index', $data);
     }
 
     /**
@@ -49,9 +49,10 @@ class FtpServerController extends Controller
             'ftp_user' => 'required',
             'ftp_password' => 'required',
         ]);
-        
+
         $server = FtpConnection::create($request->all());
         Session::flash('message', 'New FTP Server have been created successfully');
+
         return redirect()->route('serversftp.index');
     }
 
@@ -76,10 +77,10 @@ class FtpServerController extends Controller
     {
         $server = FtpConnection::findOrFail($id);
         $data = [
-            'server' =>$server
+            'server' => $server,
         ];
-        
-        return view('researcher.ftpservers.edit',$data);
+
+        return view('researcher.ftpservers.edit', $data);
     }
 
     /**
@@ -97,10 +98,10 @@ class FtpServerController extends Controller
             'ftp_user' => 'required',
             'ftp_password' => 'required',
         ]);
-       $server = FtpConnection::findOrFail($id);
-       $server->update($request->all());
-        Session::flash('message', 'Successfully updated the server: ' . $server->ftp_name);
-        
+        $server = FtpConnection::findOrFail($id);
+        $server->update($request->all());
+        Session::flash('message', 'Successfully updated the server: '.$server->ftp_name);
+
         return redirect()->route('serversftp.index');
     }
 
@@ -113,12 +114,12 @@ class FtpServerController extends Controller
     public function destroy($id)
     {
         $server = FtpConnection::findOrFail($id);
-       
+
         $server->delete();
 
         // redirect
-        Session::flash('message', 'Successfully deleted the server: ' . $server->ftp_name);
-        
+        Session::flash('message', 'Successfully deleted the server: '.$server->ftp_name);
+
         return redirect()->route('serversftp.index');
     }
 }

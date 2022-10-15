@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePaymentsTable extends Migration
 {
@@ -16,12 +16,12 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('invoices_id')->nullable();
-            $table->string('type',50)->nullable();
+            $table->string('type', 50)->nullable();
             $table->decimal('amount')->default(0);
             $table->unsignedInteger('client_id')->nullable();
-            $table->string('reference',50)->nullable();
-            $table->string('gateway',50)->nullable();
-            $table->string('transaction_status',50)->nullable();
+            $table->string('reference', 50)->nullable();
+            $table->string('gateway', 50)->nullable();
+            $table->string('transaction_status', 50)->nullable();
             $table->text('log_result')->nullable();
             $table->unsignedInteger('user_id')->nullable();
             $table->timestamps();

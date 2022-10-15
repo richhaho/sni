@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddPayeezeFieldsClient extends Migration
 {
@@ -14,10 +14,10 @@ class AddPayeezeFieldsClient extends Migration
     public function up()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->string('payeezy_type',50)->nullable();
+            $table->string('payeezy_type', 50)->nullable();
             $table->string('payeezy_value')->nullable();
             $table->string('payeezy_cardholder_name')->nullable();
-            $table->string('payeezy_exp_date',10)->nullable();
+            $table->string('payeezy_exp_date', 10)->nullable();
         });
     }
 

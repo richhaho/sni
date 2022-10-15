@@ -2,17 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Job;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Job;
-use App\Note;
-use Carbon\Carbon;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
 class ClearResearch implements ShouldQueue
-
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,23 +28,22 @@ class ClearResearch implements ShouldQueue
      *
      * @return void
      */
-
     public function handle()
     {
-        $aHourAgo = date('Y-m-d H:i:s', strtotime("-1 hour"));
-        $jobs=Job::where('research_start', '<', $aHourAgo)->where('research_start', '!=', null)->where('research_complete', null)->get();
-        foreach($jobs as $job) {
-          $job->research_start = null;
-          $job->save();
-          // workorders
-          if (count($job->workorders)==0) continue;
-          $work = $job->firstWorkorder();
-          if($work) {
-            $work->researcher = null;
-            $work->save();
-          }
+        $aHourAgo = date('Y-m-d H:i:s', strtotime('-1 hour'));
+        $jobs = Job::where('research_start', '<', $aHourAgo)->where('research_start', '!=', null)->where('research_complete', null)->get();
+        foreach ($jobs as $job) {
+            $job->research_start = null;
+            $job->save();
+            // workorders
+            if (count($job->workorders) == 0) {
+                continue;
+            }
+            $work = $job->firstWorkorder();
+            if ($work) {
+                $work->researcher = null;
+                $work->save();
+            }
         }
-        
     }
 }
-

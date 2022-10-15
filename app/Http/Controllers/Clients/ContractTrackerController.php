@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Clients;
 
-
+use App\ContractTracker;
 use App\Http\Controllers\Controller;
 use Auth;
 use Illuminate\Http\Request;
 use Response;
 use Session;
 use Storage;
-use App\ContractTracker;
-use App\Client;
 
 class ContractTrackerController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,26 +23,26 @@ class ContractTrackerController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->client->has_contract_tracker) {
+        if (! Auth::user()->client->has_contract_tracker) {
             return view('errors.403');
         }
 
-        $contract_trackers =ContractTracker::query()->where('client_id', Auth::user()->client_id);
+        $contract_trackers = ContractTracker::query()->where('client_id', Auth::user()->client_id);
         if (session()->has('contract_trackers_filter.name')) {
-            $contract_trackers->where('name','LIKE','%' . session('contract_trackers_filter.name') .'%');
-        }
-        
-        if (session()->has('contract_trackers_filter.client_id')) {
-            $contract_trackers->where('client_id',session('contract_trackers_filter.client_id'));
+            $contract_trackers->where('name', 'LIKE', '%'.session('contract_trackers_filter.name').'%');
         }
 
-        $contract_trackers= $contract_trackers->orderBy('id', 'DESC')->paginate(10);
+        if (session()->has('contract_trackers_filter.client_id')) {
+            $contract_trackers->where('client_id', session('contract_trackers_filter.client_id'));
+        }
+
+        $contract_trackers = $contract_trackers->orderBy('id', 'DESC')->paginate(10);
 
         $data = [
             'contract_trackers' => $contract_trackers,
         ];
-        
-        return view('client.contract_trackers.index',$data);
+
+        return view('client.contract_trackers.index', $data);
     }
 
     /**
@@ -57,24 +55,25 @@ class ContractTrackerController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'start_date' => 'required'
+            'start_date' => 'required',
         ]);
 
         $data = [
             'client_id' => Auth::user()->client_id,
             'name' => $request->name,
-            'start_date' => date('Y-m-d H:i:s', strtotime($request->start_date))
+            'start_date' => date('Y-m-d H:i:s', strtotime($request->start_date)),
         ];
-        $contract_tracker = ContractTracker::create( $data);
-        if ($request['contract_file']!=null && $request['contract_file']!="" ) {
+        $contract_tracker = ContractTracker::create($data);
+        if ($request['contract_file'] != null && $request['contract_file'] != '') {
             $f = $request->file('contract_file');
-            if (!$this->checkFileSize($f)) {
+            if (! $this->checkFileSize($f)) {
                 Session::flash('message', 'This file is too large to upload.');
+
                 return redirect()->route('client.contract_trackers.index');
             }
-            $xfilename = $f->getClientOriginalName();;
+            $xfilename = $f->getClientOriginalName();
             $xpath = 'attachments/contract_trackers/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $contract_tracker->contract_file = $xpath.$xfilename;
             $contract_tracker->file_original_name = $xfilename;
             $contract_tracker->file_mime = $f->getMimeType();
@@ -84,6 +83,7 @@ class ContractTrackerController extends Controller
         }
 
         Session::flash('message', 'New Contract Tracker was created.');
+
         return redirect()->route('client.contract_trackers.index');
     }
 
@@ -98,26 +98,27 @@ class ContractTrackerController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-            'start_date' => 'required'
+            'start_date' => 'required',
         ]);
 
         $data = [
             'client_id' => Auth::user()->client_id,
             'name' => $request->name,
-            'start_date' => date('Y-m-d H:i:s', strtotime($request->start_date))
+            'start_date' => date('Y-m-d H:i:s', strtotime($request->start_date)),
         ];
 
-        $contract_tracker = ContractTracker::where('id',$id)->first();
+        $contract_tracker = ContractTracker::where('id', $id)->first();
         $contract_tracker->update($data);
-        if ($request['contract_file']!=null && $request['contract_file']!="" ) {
+        if ($request['contract_file'] != null && $request['contract_file'] != '') {
             $f = $request->file('contract_file');
-            if (!$this->checkFileSize($f)) {
+            if (! $this->checkFileSize($f)) {
                 Session::flash('message', 'This file is too large to upload.');
+
                 return redirect()->route('client.contract_trackers.index');
             }
             $xfilename = $f->getClientOriginalName();
             $xpath = 'attachments/contract_trackers/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $contract_tracker->contract_file = $xpath.$xfilename;
             $contract_tracker->file_original_name = $xfilename;
             $contract_tracker->file_mime = $f->getMimeType();
@@ -126,6 +127,7 @@ class ContractTrackerController extends Controller
             $contract_tracker->save();
         }
         Session::flash('message', 'New Contract Tracker was updated.');
+
         return redirect()->route('client.contract_trackers.index');
     }
 
@@ -137,44 +139,46 @@ class ContractTrackerController extends Controller
      */
     public function destroy($id)
     {
-        $contract_tracker = ContractTracker::where('id',$id)->first();
+        $contract_tracker = ContractTracker::where('id', $id)->first();
         if ($contract_tracker) {
             $contract_tracker->delete();
             Session::flash('message', 'The contract tracker was deleted.');
         } else {
             Session::flash('message', 'The contract tracker does not exist.');
         }
+
         return redirect()->route('client.contract_trackers.index');
     }
 
     public function download($id)
     {
-        $contract_tracker = ContractTracker::where('id',$id)->first();
+        $contract_tracker = ContractTracker::where('id', $id)->first();
         $fileName = explode('/', $contract_tracker->contract_file);
         $contents = Storage::get($contract_tracker->contract_file);
-        $response = Response::make($contents, '200',[
+        $response = Response::make($contents, '200', [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$fileName[2].'"',
-            ]);
+        ]);
+
         return $response;
     }
 
-    public function checkFileSize($f) {
-        $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-        $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-         
-        if ($f->getSize()>$max_uploadfileSize){
+    public function checkFileSize($f)
+    {
+        $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+        $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+
+        if ($f->getSize() > $max_uploadfileSize) {
             return false;
         }
+
         return true;
     }
 
-
-    public function setfilter (Request $request) {
-        
+    public function setfilter(Request $request)
+    {
         if ($request->has('name')) {
-           
-            if($request->name == '' ) {
+            if ($request->name == '') {
                 session()->forget('contract_trackers_filter.name');
             } else {
                 session(['contract_trackers_filter.name' => $request->name]);
@@ -182,7 +186,7 @@ class ContractTrackerController extends Controller
         }
 
         if ($request->has('client_id')) {
-            if($request->client_id == 0 ) {
+            if ($request->client_id == 0) {
                 session()->forget('contract_trackers_filter.client_id');
             } else {
                 session(['contract_trackers_filter.client_id' => $request->client_id]);
@@ -191,11 +195,11 @@ class ContractTrackerController extends Controller
 
         return redirect()->route('client.contract_trackers.index');
     }
-    
-    
-    public function resetfilter (Request $request) {
+
+    public function resetfilter(Request $request)
+    {
         session()->forget('contract_trackers_filter');
+
         return redirect()->route('client.contract_trackers.index');
     }
-
 }

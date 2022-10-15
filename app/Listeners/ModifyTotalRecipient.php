@@ -3,8 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\WorkOrderRecipientSaved;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ModifyTotalRecipient
 {
@@ -26,8 +24,6 @@ class ModifyTotalRecipient
      */
     public function handle(WorkOrderRecipientSaved $event)
     {
-        
         $event->recipient->total = $event->recipient->postage + $event->recipient->fee + $event->recipient->other;
-       
     }
 }

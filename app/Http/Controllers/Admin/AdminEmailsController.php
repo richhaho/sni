@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\AdminEmails;
-use App\User;
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
-use Auth;
 use Response;
 use Session;
 
 class AdminEmailsController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -23,13 +22,14 @@ class AdminEmailsController extends Controller
      */
     public function index(Request $request)
     {
-       $adminemails = AdminEmails::get();
-       $admin_users = User::where('status',1)->isRole(['admin','researcher'])->get()->pluck('full_name', 'id')->toArray();
-       $data = [
-           'adminemails' => $adminemails,
-           'admin_users' => $admin_users,
-       ];
-       return view('admin.adminemails.index',$data);
+        $adminemails = AdminEmails::get();
+        $admin_users = User::where('status', 1)->isRole(['admin', 'researcher'])->get()->pluck('full_name', 'id')->toArray();
+        $data = [
+            'adminemails' => $adminemails,
+            'admin_users' => $admin_users,
+        ];
+
+        return view('admin.adminemails.index', $data);
     }
 
     /**
@@ -41,12 +41,12 @@ class AdminEmailsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $adminEmail =AdminEmails::where('id', $id)->first();
+        $adminEmail = AdminEmails::where('id', $id)->first();
         $adminEmail->users = $request->users;
         $adminEmail->save();
 
-        Session::flash('message', $adminEmail->name." was Updated.");
+        Session::flash('message', $adminEmail->name.' was Updated.');
+
         return redirect()->route('adminemails.index');
     }
-    
 }

@@ -2,8 +2,8 @@
 
 namespace App\Policies\client;
 
-use App\User;
 use App\Invoice;
+use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class InvoicePolicy

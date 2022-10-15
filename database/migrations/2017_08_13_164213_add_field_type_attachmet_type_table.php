@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddFieldTypeAttachmetTypeTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddFieldTypeAttachmetTypeTable extends Migration
     public function up()
     {
         Schema::table('attachment_types', function (Blueprint $table) {
-           $table->string('type',50)->default('custom')->after('name');
+            $table->string('type', 50)->default('custom')->after('name');
         });
     }
 
@@ -26,7 +26,7 @@ class AddFieldTypeAttachmetTypeTable extends Migration
     public function down()
     {
         Schema::table('attachment_types', function (Blueprint $table) {
-           $table->dropColumn('type');
+            $table->dropColumn('type');
         });
     }
 }

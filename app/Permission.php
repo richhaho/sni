@@ -1,4 +1,6 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Zizaco\Entrust\EntrustPermission;
 
@@ -12,6 +14,7 @@ use Zizaco\Entrust\EntrustPermission;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Permission whereDisplayName($value)
@@ -22,5 +25,4 @@ use Zizaco\Entrust\EntrustPermission;
  */
 class Permission extends EntrustPermission
 {
-    
 }

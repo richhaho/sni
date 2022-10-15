@@ -24,6 +24,7 @@ use Laravel\Scout\Searchable;
  * @property int|null $viewable
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $noteable
  * @property-read \App\User $writer
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Note forClients()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\Note onlyTrashed()
@@ -49,19 +50,19 @@ class Note extends Model
 {
     use SoftDeletes;
     use Searchable;
-    
-    public function writer () {
-        return $this->belongsTo('App\User','entered_by');
+
+    public function writer()
+    {
+        return $this->belongsTo(\App\User::class, 'entered_by');
     }
-    
-     public function noteable()
+
+    public function noteable()
     {
         return $this->morphTo();
     }
-    
+
     public function toSearchableArray()
     {
-
         $array = $this->toArray();
         unset($array['id']);
         unset($array['type']);
@@ -75,14 +76,12 @@ class Note extends Model
         unset($array['entered_at']);
         unset($array['readed_at']);
         unset($array['viewable']);
-       
-        
+
         return $array;
-    
     }
-    
-    public function scopeForClients($q) {
-        return $q->where('viewable',1);
-        
+
+    public function scopeForClients($q)
+    {
+        return $q->where('viewable', 1);
     }
 }

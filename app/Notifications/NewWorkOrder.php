@@ -4,24 +4,27 @@ namespace App\Notifications;
 
 use App\WorkOrder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class NewWorkOrder extends Notification implements ShouldQueue
 {
     public $work_order_id;
+
     public $notification;
+
     public $user;
+
     use Queueable;
-   
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($work_order_id,$notification,$user)
+    public function __construct($work_order_id, $notification, $user)
     {
         $this->work_order_id = $work_order_id;
         $this->notification = $notification;
@@ -36,7 +39,7 @@ class NewWorkOrder extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['broadcast','database','mail'];
+        return ['broadcast', 'database', 'mail'];
     }
 
     /**
@@ -47,11 +50,10 @@ class NewWorkOrder extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-            return (new MailMessage)
+        return (new MailMessage)
                     ->line('A new work order has been created ')
-                    ->action('View Work Order', route('workorders.edit',$this->work_order_id))
+                    ->action('View Work Order', route('workorders.edit', $this->work_order_id))
                     ->line('Thank you for using Sunshine Notices!');
-
     }
 
     /**
@@ -63,29 +65,28 @@ class NewWorkOrder extends Notification implements ShouldQueue
     public function toDatabase($notifiable)
     {
         $wo = WorkOrder::findOrFail($this->work_order_id);
-        
-        $url = route('workorders.edit',$wo->id);
-        
+
+        $url = route('workorders.edit', $wo->id);
+
         return [
             'note_id' => $this->work_order_id,
-            'message' =>  $this->notification,
-            'user' => $this->user ,
-            'url_admin' =>$url
+            'message' => $this->notification,
+            'user' => $this->user,
+            'url_admin' => $url,
         ];
     }
-    
+
     public function toBroadcast($notifiable)
     {
-        
-         $wo = WorkOrder::findOrFail($this->work_order_id);
-        
-        $url = route('workorders.edit',$wo->id);
-        
-            return new BroadcastMessage([
-                'note_id' => $this->work_order_id,
-                'message' =>  $this->notification,
-                'user' => $this->user ,
-                'url_admin' =>$url
-            ]);
+        $wo = WorkOrder::findOrFail($this->work_order_id);
+
+        $url = route('workorders.edit', $wo->id);
+
+        return new BroadcastMessage([
+            'note_id' => $this->work_order_id,
+            'message' => $this->notification,
+            'user' => $this->user,
+            'url_admin' => $url,
+        ]);
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Attachment $attachment
  * @property-read \App\MailingBatch $batch
  * @property-read \App\WorkOrderRecipient $recipient
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\BatchDetail whereAttachmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\BatchDetail whereBatchId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\BatchDetail whereClientId($value)
@@ -30,14 +31,16 @@ class BatchDetail extends Model
 {
     public function batch()
     {
-        return $this->belongsTo('App\MailingBatch','batch_id');
+        return $this->belongsTo(\App\MailingBatch::class, 'batch_id');
     }
-    
-    public function recipient () {
-        return $this->belongsTo('App\WorkOrderRecipient','work_order_recipient');
-    } 
-    
-    public function attachment () {
-        return $this->belongsTo('App\Attachment');
-    } 
+
+    public function recipient()
+    {
+        return $this->belongsTo(\App\WorkOrderRecipient::class, 'work_order_recipient');
+    }
+
+    public function attachment()
+    {
+        return $this->belongsTo(\App\Attachment::class);
+    }
 }

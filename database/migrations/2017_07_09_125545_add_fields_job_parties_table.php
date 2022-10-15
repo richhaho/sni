@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddFieldsJobPartiesTable extends Migration
 {
@@ -27,7 +27,7 @@ class AddFieldsJobPartiesTable extends Migration
     public function down()
     {
         Schema::table('job_parties', function (Blueprint $table) {
-             $table->dropColumn('copy_type');
+            $table->dropColumn('copy_type');
             $table->dropColumn('leaseholder_type');
         });
     }

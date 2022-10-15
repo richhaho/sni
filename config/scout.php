@@ -61,18 +61,17 @@ return [
     'elasticsearch' => [
         'index' => env('ELASTICSEARCH_INDEX', 'snisearch'),
         'config' => [
-            'hosts' =>  env('ELASTICSEARCH_HOST', 'localhost')
-                    
-            ],
+            'hosts' => env('ELASTICSEARCH_HOST', 'localhost'),
+
+        ],
     ],
-     'mysql' => [
+    'mysql' => [
         'mode' => 'BOOLEAN',
         'model_directories' => [app_path()],
         'min_search_length' => 0,
         'min_fulltext_search_length' => 500,
         'min_fulltext_search_fallback' => 'LIKE',
-        'query_expansion' => false
+        'query_expansion' => false,
     ],
-    
 
 ];

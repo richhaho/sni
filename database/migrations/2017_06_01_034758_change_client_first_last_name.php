@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ChangeClientFirstLastName extends Migration
 {
@@ -20,7 +20,7 @@ class ChangeClientFirstLastName extends Migration
             $table->dropColumn('print_method');
         });
         Schema::table('clients', function (Blueprint $table) {
-            $table->enum('print_method', ['none','sni', 'client'])->default('none');
+            $table->enum('print_method', ['none', 'sni', 'client'])->default('none');
         });
     }
 
@@ -31,9 +31,9 @@ class ChangeClientFirstLastName extends Migration
      */
     public function down()
     {
-       DB::statement('ALTER TABLE clients modify first_name VARCHAR(80)');
-       DB::statement('ALTER TABLE clients modify last_name VARCHAR(80)');
-       DB::statement('ALTER TABLE clients modify email VARCHAR(191)');
+        DB::statement('ALTER TABLE clients modify first_name VARCHAR(80)');
+        DB::statement('ALTER TABLE clients modify last_name VARCHAR(80)');
+        DB::statement('ALTER TABLE clients modify email VARCHAR(191)');
         Schema::table('clients', function (Blueprint $table) {
             $table->dropColumn('print_method');
         });

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateWorkOrderPaymentsTable extends Migration
 {
@@ -19,7 +19,7 @@ class CreateWorkOrderPaymentsTable extends Migration
             $table->unsignedInteger('job_id');
             $table->string('reference');
             $table->string('description');
-            $table->double('amount',15,4);
+            $table->double('amount', 15, 4);
             $table->dateTime('payed_at')->nullable();
             $table->timestamps();
         });

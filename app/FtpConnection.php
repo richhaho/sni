@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $ftp_path
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpConnection whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpConnection whereFtpHost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpConnection whereFtpName($value)
@@ -27,5 +28,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FtpConnection extends Model
 {
-    protected $fillable = ['ftp_name','ftp_host','ftp_user','ftp_password','ftp_path'];
+    protected $fillable = ['ftp_name', 'ftp_host', 'ftp_user', 'ftp_password', 'ftp_path'];
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class NotesTypesController extends Controller
 {

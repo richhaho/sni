@@ -38,40 +38,38 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-    
-    
+
     protected function authenticated($request, $user)
     {
+        if ($user->hasRole(['admin'])) {
+            Session::put('user_role', 'admin');
 
-
-        if($user->hasRole(['admin'])) {
-            Session::put('user_role','admin');
             return redirect()->intended(route('admin'));
         }
-        if($user->hasRole(['researcher'])) {
-            Session::put('user_role','researcher');
+        if ($user->hasRole(['researcher'])) {
+            Session::put('user_role', 'researcher');
             //return redirect()->intended(route('researcher'));
             if ($user->restricted) {
                 return redirect()->intended(route('research.index'));
             }
+
             return redirect()->intended(route('admin'));
         }
 
-        if($user->hasRole(['client','client-secondary'])) {
-            if ($user->approve_status=='approved'){
-                if($user->client) {
-                    Session::put('user_role','client');
+        if ($user->hasRole(['client', 'client-secondary'])) {
+            if ($user->approve_status == 'approved') {
+                if ($user->client) {
+                    Session::put('user_role', 'client');
+
                     return redirect()->intended(route('client.index'));
                 }
             }
             auth()->logout();
-            return redirect()->route('login');
-            
-        }
 
+            return redirect()->route('login');
+        }
     }
-    
-    
+
     /**
      * Get the needed authorization credentials from the request.
      *
@@ -82,6 +80,7 @@ class LoginController extends Controller
     {
         $credentials = $request->only($this->username(), 'password');
         $credentials['status'] = 1;
+
         return $credentials;
     }
 }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Role;
-use Config;
+use Illuminate\Http\Request;
 use Session;
+
 class RolesController extends Controller
 {
     /**
@@ -16,19 +16,16 @@ class RolesController extends Controller
      */
     public function index()
     {
-        
-       
         $roles = Role::All();
-        
-       
-        $types = ['Administration'=>'Administration', 'Clients'=>'Clients'];
+
+        $types = ['Administration' => 'Administration', 'Clients' => 'Clients'];
         $data = [
             'types' => $types,
             'roles' => $roles,
-            
+
         ];
-                
-        return view('admin.roles.index',$data);
+
+        return view('admin.roles.index', $data);
     }
 
     /**
@@ -49,19 +46,20 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-          $this->validate($request, [
+        $this->validate($request, [
             'new_name' => 'required|alpha_dash|unique:roles,name',
             'new_display_name' => 'required|unique:roles,display_name',
         ]);
-         
+
         $role = new Role();
         $role->name = $request->new_name;
         $role->display_name = $request->new_display_name;
         $role->description = $request->new_description;
         $role->type = $request->new_type;
         $role->save();
-        
-        Session::flash('message', 'Role ' . $role->display_name . ' successfully created.');
+
+        Session::flash('message', 'Role '.$role->display_name.' successfully created.');
+
         return redirect()->route('roles.index');
     }
 
@@ -84,7 +82,6 @@ class RolesController extends Controller
      */
     public function edit($id)
     {
-       
     }
 
     /**
@@ -96,15 +93,15 @@ class RolesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
         $this->validate($request, [
-            'name' => 'required|alpha_dash|unique:roles,name,' . $id,
-            'display_name' => 'required|unique:roles,display_name,' . $id,
+            'name' => 'required|alpha_dash|unique:roles,name,'.$id,
+            'display_name' => 'required|unique:roles,display_name,'.$id,
         ]);
         $role = Role::findOrFail($id);
-        $role->update($request->all());;
-        
-        Session::flash('message', 'Role ' . $role->display_name . ' successfully updated.');
+        $role->update($request->all());
+
+        Session::flash('message', 'Role '.$role->display_name.' successfully updated.');
+
         return redirect()->route('roles.index');
     }
 
@@ -119,9 +116,9 @@ class RolesController extends Controller
         $role = Role::findOrFail($id);
         $temp_name = $role->display_name;
         $role->delete();
-        
-         Session::flash('message', 'Role ' .$temp_name . ' successfully deleted.');
-        
+
+        Session::flash('message', 'Role '.$temp_name.' successfully deleted.');
+
         return redirect()->route('roles.index');
     }
 }

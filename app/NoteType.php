@@ -5,13 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-
 /**
  * App\NoteType
  *
  * @property string $slug
  * @property string $name
  * @property string|null $deleted_at
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\NoteType onlyTrashed()
  * @method static bool|null restore()
@@ -24,14 +24,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class NoteType extends Model
 {
-    
-     use SoftDeletes;
-    public $timestamps = false; 
-        /**
-     * primaryKey 
-     * 
-     * @var integer
-     * @access protected
+    use SoftDeletes;
+
+    public $timestamps = false;
+
+    /**
+     * primaryKey
+     *
+     * @var int
      */
     protected $primaryKey = 'slug';
 

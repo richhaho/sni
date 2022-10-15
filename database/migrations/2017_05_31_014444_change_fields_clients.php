@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ChangeFieldsClients extends Migration
 {
@@ -19,9 +19,9 @@ class ChangeFieldsClients extends Migration
             $table->dropColumn('send_certified');
         });
         Schema::table('clients', function (Blueprint $table) {
-            $table->enum('gender', ['none','female', 'male'])->default('none');
-            $table->enum('billing_type', ['none','attime', 'invoiced'])->default('none');
-            $table->enum('send_certified', ['none','green', 'nongreen'])->default('none');
+            $table->enum('gender', ['none', 'female', 'male'])->default('none');
+            $table->enum('billing_type', ['none', 'attime', 'invoiced'])->default('none');
+            $table->enum('send_certified', ['none', 'green', 'nongreen'])->default('none');
         });
     }
 
@@ -32,7 +32,6 @@ class ChangeFieldsClients extends Migration
      */
     public function down()
     {
-        
         Schema::table('clients', function (Blueprint $table) {
             $table->dropColumn('gender');
             $table->dropColumn('billing_type');

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Site extends Model
 {
-    protected $fillable = ['county','name', 'url'];
-    protected $table='sites';
+    protected $fillable = ['county', 'name', 'url'];
+
+    protected $table = 'sites';
 }

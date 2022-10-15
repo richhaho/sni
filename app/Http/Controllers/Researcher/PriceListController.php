@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\PriceList;
+use Illuminate\Http\Request;
 use Session;
 
 class PriceListController extends Controller
@@ -16,15 +16,14 @@ class PriceListController extends Controller
      */
     public function index()
     {
-        
         $list = PriceList::All();
-        
-       $data = [
+
+        $data = [
             'list' => $list,
-            
+
         ];
-                
-        return view('researcher.pricelist.index',$data);
+
+        return view('researcher.pricelist.index', $data);
     }
 
     /**
@@ -45,18 +44,19 @@ class PriceListController extends Controller
      */
     public function store(Request $request)
     {
-           $this->validate($request, [
+        $this->validate($request, [
             'new_description' => 'required',
             'new_price' => 'required|numeric',
         ]);
-         
+
         $item = new PriceList();
-    
+
         $item->description = $request->new_description;
         $item->price = $request->new_price;
         $item->save();
-        
-        Session::flash('message', 'Item ' . $item->description . ' successfully created.');
+
+        Session::flash('message', 'Item '.$item->description.' successfully created.');
+
         return redirect()->route('pricelist.index');
     }
 
@@ -68,12 +68,13 @@ class PriceListController extends Controller
      */
     public function show($id)
     {
-        
     }
 
-    public function itemlist(){
+    public function itemlist()
+    {
         return PriceList::get()->ToJson();
     }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -94,14 +95,15 @@ class PriceListController extends Controller
      */
     public function update(Request $request, $id)
     {
-         $this->validate($request, [
+        $this->validate($request, [
             'description' => 'required',
             'price' => 'required|numeric',
         ]);
         $item = PriceList::findOrFail($id);
-        $item->update($request->all());;
-        
-        Session::flash('message', 'Item ' . $item->description . ' successfully updated.');
+        $item->update($request->all());
+
+        Session::flash('message', 'Item '.$item->description.' successfully updated.');
+
         return redirect()->route('pricelist.index');
     }
 
@@ -113,12 +115,12 @@ class PriceListController extends Controller
      */
     public function destroy($id)
     {
-         $item = PriceList::findOrFail($id);
-        
+        $item = PriceList::findOrFail($id);
+
         $item->delete();
-        
-         Session::flash('message', 'Item ' .$item->description . ' successfully deleted.');
-        
+
+        Session::flash('message', 'Item '.$item->description.' successfully deleted.');
+
         return redirect()->route('pricelist.index');
     }
 }

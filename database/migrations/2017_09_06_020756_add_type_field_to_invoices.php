@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddTypeFieldToInvoices extends Migration
 {
@@ -26,7 +26,7 @@ class AddTypeFieldToInvoices extends Migration
     public function down()
     {
         Schema::table('invoices', function (Blueprint $table) {
-             $table->dropColumn('type');
+            $table->dropColumn('type');
         });
     }
 }

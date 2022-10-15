@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddTypeFieldRolesTable extends Migration
 {
@@ -14,7 +14,7 @@ class AddTypeFieldRolesTable extends Migration
     public function up()
     {
         Schema::table('roles', function (Blueprint $table) {
-             $table->string('type')->nullable();
+            $table->string('type')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddTypeFieldRolesTable extends Migration
     public function down()
     {
         Schema::table('roles', function (Blueprint $table) {
-             $table->dropColumn('type');
+            $table->dropColumn('type');
         });
     }
 }

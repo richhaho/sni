@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\FtpConnection $server
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpLocation whereConnectionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpLocation whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\FtpLocation whereId($value)
@@ -26,9 +27,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class FtpLocation extends Model
 {
-     protected $fillable = ['name','path','connection_id'];
-     
-     public function server() {
-         return $this->belongsTo('\App\FtpConnection','connection_id');
-     }
+    protected $fillable = ['name', 'path', 'connection_id'];
+
+    public function server()
+    {
+        return $this->belongsTo(\App\FtpConnection::class, 'connection_id');
+    }
 }

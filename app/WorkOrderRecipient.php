@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Events\WorkOrderRecipientSaved;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\WorkOrderRecipient
@@ -26,6 +26,7 @@ use App\Events\WorkOrderRecipientSaved;
  * @property float $total
  * @property-read \App\JobParty $party
  * @property-read \App\WorkOrder $work_order
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WorkOrderRecipient whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WorkOrderRecipient whereAttentionName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\WorkOrderRecipient whereBarcode($value)
@@ -49,13 +50,14 @@ class WorkOrderRecipient extends Model
     protected $events = [
         'saving' => WorkOrderRecipientSaved::class,
     ];
+
     public function party()
     {
-        return $this->belongsTo('App\JobParty')->withTrashed();
+        return $this->belongsTo(\App\JobParty::class)->withTrashed();
     }
-    
+
     public function work_order()
     {
-        return $this->belongsTo('App\WorkOrder','work_order_id');
+        return $this->belongsTo(\App\WorkOrder::class, 'work_order_id');
     }
 }

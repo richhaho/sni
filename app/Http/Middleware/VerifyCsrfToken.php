@@ -11,8 +11,8 @@ class VerifyCsrfToken extends BaseVerifier
      *
      * @var array
      */
-   protected $except = [
-    	'/logout',
-	    '/payeezy/hook/token',
+    protected $except = [
+        '/logout',
+        '/payeezy/hook/token',
     ];
 }

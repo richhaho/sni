@@ -1,18 +1,21 @@
 <?php
 
 namespace App\Notifications;
-use App\WorkOrder;
+
 use App\User;
+use App\WorkOrder;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class SendWorkorderLink extends Notification
 {
     use Queueable;
+
     protected $work;
+
     protected $user;
+
     /**
      * Create a new notification instance.
      *
@@ -20,8 +23,8 @@ class SendWorkorderLink extends Notification
      */
     public function __construct(User $user, WorkOrder $work)
     {
-       $this->user =$user;
-       $this->work =$work;
+        $this->user = $user;
+        $this->work = $work;
     }
 
     /**
@@ -50,11 +53,12 @@ class SendWorkorderLink extends Notification
             $fromEmail = $from->from_email;
             $fromName = $from->from_name;
         }
+
         return (new MailMessage)
                     ->from($fromEmail, $fromName)
                     ->subject('Provide work order information')
                     ->line('Please click the link below to provide information for your work order.')
-                    ->action('Click Here', url('/'.$this->user->id.'/workorder_provide/'. $this->work->id . '/contactwith_attachment'))
+                    ->action('Click Here', url('/'.$this->user->id.'/workorder_provide/'.$this->work->id.'/contactwith_attachment'))
                     ->line('Thank you for using Sunshine Notices!');
     }
 

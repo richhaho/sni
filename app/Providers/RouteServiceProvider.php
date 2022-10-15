@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -40,8 +40,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
         //$this->mapWebResearcherRoutes();
         $this->mapWebAdminRoutes();
-        
-        
+
         $this->mapWebClientRoutes();
         //
     }
@@ -60,7 +59,7 @@ class RouteServiceProvider extends ServiceProvider
              ->group(base_path('routes/web.php'));
     }
 
-      /**
+    /**
      * Define the "web" routes for the application Accesible by Admins.
      *
      * These routes all receive session state, CSRF protection, etc.
@@ -73,14 +72,15 @@ class RouteServiceProvider extends ServiceProvider
              ->namespace($this->namespace)
              ->group(base_path('routes/admin-web.php'));
     }
+
     protected function mapWebResearcherRoutes()
     {
         Route::middleware('web')
              ->namespace($this->namespace)
              ->group(base_path('routes/researcher-web.php'));
     }
-    
-     /**
+
+    /**
      * Define the "web" routes for the application Accesible by Clients.
      *
      * These routes all receive session state, CSRF protection, etc.
@@ -93,7 +93,7 @@ class RouteServiceProvider extends ServiceProvider
              ->namespace($this->namespace)
              ->group(base_path('routes/client-web.php'));
     }
-    
+
     /**
      * Define the "api" routes for the application.
      *

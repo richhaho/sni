@@ -2,11 +2,11 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Hash;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 /**
  * App\User
@@ -28,6 +28,7 @@ use Hash;
  * @property-read mixed $full_name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Role[] $roles
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\User isRole($role)
  * @method static \Illuminate\Database\Query\Builder|\App\User onlyTrashed()
@@ -51,20 +52,19 @@ use Hash;
  */
 class User extends Authenticatable
 {
-    
     use Notifiable;
     use EntrustUserTrait { restore as private restore_entrust; }
     use SoftDeletes { restore as private restore_softdelete; }
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
-        
-        static::creating(function($user) {
+
+        static::creating(function ($user) {
             $user->email_token = str_random(30);
             $user->status = 0;
             $user->verified = false;
         });
-        
     }
 
     public function restore()
@@ -72,21 +72,21 @@ class User extends Authenticatable
         $this->restore_entrust();
         $this->restore_softdelete();
     }
-    
-    
+
     public function confirmEmail()
     {
         $this->verified = true;
         $this->email_token = null;
         $this->save();
     }
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'first_name','last_name', 'email', 'password','status','client_id','verified', 'restricted'
+        'first_name', 'last_name', 'email', 'password', 'status', 'client_id', 'verified', 'restricted',
     ];
 
     /**
@@ -97,34 +97,32 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-    
+
     //public function setPasswordAttribute($password)
-    //{   
+    //{
     //    $this->attributes['password'] = Hash::make($password);
     //}
-    
-    
-    public function getFullNameAttribute() {
-        return $this->first_name . ' ' . $this->last_name;
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name.' '.$this->last_name;
     }
-    
-    public function scopeIsRole($query, $role) {
+
+    public function scopeIsRole($query, $role)
+    {
         return $query->whereHas(
-            'roles', function($query) use ($role){
+            'roles', function ($query) use ($role) {
                 if (is_array($role)) {
-                    $query->whereIn('name', $role); 
+                    $query->whereIn('name', $role);
                 } else {
                     $query->where('name', $role);
                 }
             }
         );
     }
-    
+
     public function client()
     {
-        return $this->belongsTo('App\Client');
+        return $this->belongsTo(\App\Client::class);
     }
-    
-   
-    
 }

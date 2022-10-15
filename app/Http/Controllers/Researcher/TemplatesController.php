@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Researcher;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Template;
 use App\TemplateLine;
 use App\WorkOrderType;
+use Illuminate\Http\Request;
 use Session;
 
 class TemplatesController extends Controller
@@ -18,19 +18,19 @@ class TemplatesController extends Controller
      */
     public function index()
     {
-         
         $templates = Template::defaults()->paginate(15);
         $existent_types = Template::defaults()->pluck('type_slug')->toArray();
-        $types = WorkOrderType::all()->pluck('name','slug')->toArray();
-        foreach($existent_types as $key) {
+        $types = WorkOrderType::all()->pluck('name', 'slug')->toArray();
+        foreach ($existent_types as $key) {
             unset($types[$key]);
         }
-      
+
         $data = [
-            'templates' =>$templates,
-            'types' =>$types
+            'templates' => $templates,
+            'types' => $types,
         ];
-        return view('researcher.templates.index',$data);
+
+        return view('researcher.templates.index', $data);
     }
 
     /**
@@ -40,36 +40,36 @@ class TemplatesController extends Controller
      */
     public function create(Request $request)
     {
-        if($request->has('type')) {
+        if ($request->has('type')) {
             $type = $request->type;
         } else {
-            $type ="";
+            $type = '';
         }
-           
-         $line_types = [
-             'apply-always' => 'Apply Always',
-             'aply-when-rush' =>'Apply when Rush',
-             'standard-mail' => 'Apply when Regular Mail',
-             'certified-green' => 'Apply when Certfied Green RR',   
-             'certified-nongreen' => 'Apply when Certfied Non Green', 
-             'registered-mail' => 'Apply when Registered Mail',
-             'express-mail' => 'Apply when Express Mail',
-             'other-mail' => 'Apply when eMail',
-             'return-mail' => 'Apply when Return Recipient',
-             ];
-         $existent_types = Template::defaults()->pluck('type_slug')->toArray();
-        $types = WorkOrderType::all()->pluck('name','slug')->toArray();
-        foreach($existent_types as $key) {
+
+        $line_types = [
+            'apply-always' => 'Apply Always',
+            'aply-when-rush' => 'Apply when Rush',
+            'standard-mail' => 'Apply when Regular Mail',
+            'certified-green' => 'Apply when Certfied Green RR',
+            'certified-nongreen' => 'Apply when Certfied Non Green',
+            'registered-mail' => 'Apply when Registered Mail',
+            'express-mail' => 'Apply when Express Mail',
+            'other-mail' => 'Apply when eMail',
+            'return-mail' => 'Apply when Return Recipient',
+        ];
+        $existent_types = Template::defaults()->pluck('type_slug')->toArray();
+        $types = WorkOrderType::all()->pluck('name', 'slug')->toArray();
+        foreach ($existent_types as $key) {
             unset($types[$key]);
         }
-      
-         $data = [
-             'types' => $types,
-             'type' => $type,
-             'line_types' => $line_types
-         ];
-         
-         return view('researcher.templates.create',$data);
+
+        $data = [
+            'types' => $types,
+            'type' => $type,
+            'line_types' => $line_types,
+        ];
+
+        return view('researcher.templates.create', $data);
     }
 
     /**
@@ -80,30 +80,30 @@ class TemplatesController extends Controller
      */
     public function store(Request $request)
     {
-         $this->validate($request, [
+        $this->validate($request, [
             'type' => 'required',
             'line_type' => 'required',
             'description' => 'required',
             'quantity' => 'required|integer',
             'price' => 'required|numeric',
-        ]); 
-         
+        ]);
+
         $template = new Template();
         $template->type_slug = $request->type;
         $template->enabled = 1;
         $template->save();
-        
-        
+
         $line = new TemplateLine();
         $line->type = $request->line_type;
         $line->description = $request->description;
         $line->quantity = $request->quantity;
         $line->price = $request->price;
-       
+
         $template->lines()->save($line);
-                
-         Session::flash('message', 'New Template created');
-        return redirect()->route('templates.edit',$template->id);
+
+        Session::flash('message', 'New Template created');
+
+        return redirect()->route('templates.edit', $template->id);
     }
 
     /**
@@ -128,29 +128,29 @@ class TemplatesController extends Controller
         $template = Template::findOrFail($id);
         $line_types = [
             'apply-always' => 'Apply Always',
-             'aply-when-rush' =>'Apply when Rush',
-             'standard-mail' => 'Apply when Regular Mail',
-             'certified-green' => 'Apply when Certfied Green RR',   
-             'certified-nongreen' => 'Apply when Certfied Non Green', 
-             'registered-mail' => 'Apply when Registered Mail',
-             'express-mail' => 'Apply when Express Mail',
-             'other-mail' => 'Apply when eMail',
-             'return-mail' => 'Apply when Return Recipient',
-            ];
+            'aply-when-rush' => 'Apply when Rush',
+            'standard-mail' => 'Apply when Regular Mail',
+            'certified-green' => 'Apply when Certfied Green RR',
+            'certified-nongreen' => 'Apply when Certfied Non Green',
+            'registered-mail' => 'Apply when Registered Mail',
+            'express-mail' => 'Apply when Express Mail',
+            'other-mail' => 'Apply when eMail',
+            'return-mail' => 'Apply when Return Recipient',
+        ];
         //only types not assigned + current type
         $existent_types = Template::defaults()->pluck('type_slug')->toArray();
-        $types = WorkOrderType::all()->pluck('name','slug')->toArray();
-        foreach($existent_types as $key) {
+        $types = WorkOrderType::all()->pluck('name', 'slug')->toArray();
+        foreach ($existent_types as $key) {
             unset($types[$key]);
         }
-        $types[$template->type_slug] =  $template->type->name;
+        $types[$template->type_slug] = $template->type->name;
         $data = [
-             'types' => $types,
-             'line_types' => $line_types,
-             'template' => $template
+            'types' => $types,
+            'line_types' => $line_types,
+            'template' => $template,
         ];
-        
-        return view ('researcher.templates.edit',$data);
+
+        return view('researcher.templates.edit', $data);
     }
 
     /**
@@ -165,21 +165,21 @@ class TemplatesController extends Controller
         $this->validate($request, [
             'new_description.*' => 'required',
             'new_quantity.*' => 'required|numeric',
-            'new_price.*' => 'required|numeric'
-        ],[
+            'new_price.*' => 'required|numeric',
+        ], [
             'new_description.*' => 'The Description is required',
             'new_quantity.*' => 'The quantity must be numeric',
-            'new_price.*' => 'The price must be numeric'
+            'new_price.*' => 'The price must be numeric',
         ]);
-        
+
         //dd('valido');
         $template = Template::findOrFail($id);
         $template->type_slug = $request->type;
-        $template->save();   
-        
+        $template->save();
+
         if ($request->input('line_type')) {
             foreach ($request->input('line_type') as $key => $linetype) {
-                $line =  TemplateLine::findOrFail($key);
+                $line = TemplateLine::findOrFail($key);
                 $line->type = $request->line_type[$key];
                 $line->description = $request->description[$key];
                 $line->quantity = $request->quantity[$key];
@@ -187,17 +187,18 @@ class TemplatesController extends Controller
                 $line->save();
             }
         }
-        
+
         if ($request->input('new_line_type')) {
-        foreach ($request->input('new_line_type') as $key => $linetype) {
-            $line = new TemplateLine();
-            $line->type = $request->new_line_type[$key];
-            $line->description = $request->new_description[$key];
-            $line->quantity = $request->new_quantity[$key];
-            $line->price = $request->new_price[$key];
-            $template->lines()->save($line);
+            foreach ($request->input('new_line_type') as $key => $linetype) {
+                $line = new TemplateLine();
+                $line->type = $request->new_line_type[$key];
+                $line->description = $request->new_description[$key];
+                $line->quantity = $request->new_quantity[$key];
+                $line->price = $request->new_price[$key];
+                $template->lines()->save($line);
+            }
         }
-        }
+
         return redirect()->route('templates.index');
     }
 
@@ -212,8 +213,9 @@ class TemplatesController extends Controller
         $template = Template::findOrFail($id);
         $old_name = $template->type->name;
         $template->delete();
-        
+
         Session::flash('message', 'Template deleted');
+
         return redirect()->route('templates.index');
     }
 }

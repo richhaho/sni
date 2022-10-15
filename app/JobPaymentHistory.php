@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \App\Job|null $job
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobPaymentHistory whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobPaymentHistory whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobPaymentHistory whereDescription($value)
@@ -26,9 +27,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class JobPaymentHistory extends Model
 {
-    protected $fillable = ['description','amaount','payed_on', 'attached_file'];
+    protected $fillable = ['description', 'amaount', 'payed_on', 'attached_file'];
+
     public function job()
     {
-        return $this->belongsTo('App\Job');
+        return $this->belongsTo(\App\Job::class);
     }
 }

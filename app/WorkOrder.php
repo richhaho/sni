@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\PdfPage[] $pdf_pages
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\WorkOrderRecipient[] $recipients
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Invoice[] $wizardInvoices
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\App\WorkOrder onlyTrashed()
  * @method static bool|null restore()
@@ -50,101 +51,114 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class WorkOrder extends Model
 {
-    
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'job_id','status', 'type', 'due_at','is_rush','mailing_at', 'responsible_user', 'manager', 'researcher'
+        'job_id', 'status', 'type', 'due_at', 'is_rush', 'mailing_at', 'responsible_user', 'manager', 'researcher',
     ];
-    
-    protected $dates = ['deleted_at','due_at','mailing_at'];
-    
+
+    protected $dates = ['deleted_at', 'due_at', 'mailing_at'];
+
     use SoftDeletes;
-    
+
     public function job()
     {
-        return $this->belongsTo('App\Job')->withTrashed();;
-    }
-    
-    
-    public function attachments()
-    {
-        return $this->morphMany('App\Attachment', 'attachable');
-    }
-    
-    public function getNumberAttribute() {
-        return sprintf('%08d', $this->id);
-    }
-    
-    public function client()
-    {
-        return $this->hasManyThrough('App\Client', 'App\Job','client_id','id','job_id')->withTrashed();;
-    }
-    
-    public function notes()
-    {
-        return $this->morphMany('App\Note', 'noteable');
-    }
-    
-     public function invoices()  {
-        return $this->hasMany('App\Invoice');
-    }
-    public function invoicesPending()  {
-        return $this->hasMany('App\Invoice')->whereNull('payed_at');
-    }
-    
-    
-     public function invoicesPaid()  {
-        return $this->hasMany('App\Invoice')->whereNotNull('payed_at');
-    }
-    
-     public function wizardInvoices()  {
-        return $this->hasMany('App\Invoice')->wizard();
-    }
-    
-    public function pdf_pages()  {
-        return $this->hasMany('App\PdfPage');
-    }
-    
-     public function recipients()  {
-        return $this->hasMany('App\WorkOrderRecipient');
-    }
-    
-    public function order_type() {
-        return $this->belongsTo('App\WorkOrderType','type','slug')->withTrashed();;
+        return $this->belongsTo(\App\Job::class)->withTrashed();
     }
 
-    public function getPaidAttribute() {
-        $unpaid_i = count($this->invoices()->where('status','unpaid')->get());
-        $open_i = count($this->invoices()->where('status','open')->get());
-        if($unpaid_i + $open_i > 0) {
+    public function attachments()
+    {
+        return $this->morphMany(\App\Attachment::class, 'attachable');
+    }
+
+    public function getNumberAttribute()
+    {
+        return sprintf('%08d', $this->id);
+    }
+
+    public function client()
+    {
+        return $this->hasManyThrough(\App\Client::class, \App\Job::class, 'client_id', 'id', 'job_id')->withTrashed();
+    }
+
+    public function notes()
+    {
+        return $this->morphMany(\App\Note::class, 'noteable');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(\App\Invoice::class);
+    }
+
+    public function invoicesPending()
+    {
+        return $this->hasMany(\App\Invoice::class)->whereNull('payed_at');
+    }
+
+    public function invoicesPaid()
+    {
+        return $this->hasMany(\App\Invoice::class)->whereNotNull('payed_at');
+    }
+
+    public function wizardInvoices()
+    {
+        return $this->hasMany(\App\Invoice::class)->wizard();
+    }
+
+    public function pdf_pages()
+    {
+        return $this->hasMany(\App\PdfPage::class);
+    }
+
+    public function recipients()
+    {
+        return $this->hasMany(\App\WorkOrderRecipient::class);
+    }
+
+    public function order_type()
+    {
+        return $this->belongsTo(\App\WorkOrderType::class, 'type', 'slug')->withTrashed();
+    }
+
+    public function getPaidAttribute()
+    {
+        $unpaid_i = count($this->invoices()->where('status', 'unpaid')->get());
+        $open_i = count($this->invoices()->where('status', 'open')->get());
+        if ($unpaid_i + $open_i > 0) {
             return false;
         }
+
         return true;
     }
 
-    public function researcherUser() {
+    public function researcherUser()
+    {
         $researcher = User::where('id', $this->researcher)->first();
+
         return $researcher;
     }
 
-    public function todos() {
+    public function todos()
+    {
         return Todo::where('workorder_id', $this->id)->where('status', '!=', 'pending')->get();
     }
 
-    public function unpaidTodos() {
+    public function unpaidTodos()
+    {
         return Todo::where('workorder_id', $this->id)->where('status', 'pending')->orderBy('created_at', 'desc')->get();
     }
 
-    public function unpaidLastTodo($todo_name) {
+    public function unpaidLastTodo($todo_name)
+    {
         return Todo::where('workorder_id', $this->id)->where('status', 'pending')->where('name', $todo_name)->orderBy('created_at', 'desc')->first();
     }
 
-
-    public function incompleteTodos() {
+    public function incompleteTodos()
+    {
         return Todo::where('workorder_id', $this->id)->where('status', '!=', 'pending')->where('status', '!=', 'completed')->get();
     }
 }

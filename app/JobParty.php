@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read \App\ContactInfo $contact
  * @property-read \App\Entity $firm
  * @property-read \App\Job $job
+ *
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\JobParty ofType($type)
  * @method static \Illuminate\Database\Query\Builder|\App\JobParty onlyTrashed()
@@ -71,28 +72,30 @@ class JobParty extends Model
 {
     //
     use SoftDeletes;
-    
-    protected $fillable = ['job_id','type', 'entity_id','contact_id','bond_type','bond_amount','bond_date','bond_bookpage_number','landowner_deed_number','landowner_lien_prohibition','leaseholder_type','leaseholder_lease_agreement','leaseholder_lease_number','leaseholder_bookpage_number','copy_type', 'source'];
-    
+
+    protected $fillable = ['job_id', 'type', 'entity_id', 'contact_id', 'bond_type', 'bond_amount', 'bond_date', 'bond_bookpage_number', 'landowner_deed_number', 'landowner_lien_prohibition', 'leaseholder_type', 'leaseholder_lease_agreement', 'leaseholder_lease_number', 'leaseholder_bookpage_number', 'copy_type', 'source'];
+
     protected $attributes = [
         'source' => 'CL',
     ];
 
-    public function contact() {
-        return $this->belongsTo('App\ContactInfo')->withTrashed();
+    public function contact()
+    {
+        return $this->belongsTo(\App\ContactInfo::class)->withTrashed();
     }
-    
-    public function firm() {
-        return $this->belongsTo('App\Entity','entity_id');
+
+    public function firm()
+    {
+        return $this->belongsTo(\App\Entity::class, 'entity_id');
     }
-    
-    public function job() {
-        return $this->belongsTo('App\Job');
+
+    public function job()
+    {
+        return $this->belongsTo(\App\Job::class);
     }
-    
+
     public function scopeOfType($query, $type)
     {
         return $query->where('type', $type)->whereNull('deleted_at');
     }
-    
 }

@@ -5,16 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Folder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Auth;
 use Response;
 use Session;
 
 class FoldersController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -22,12 +21,13 @@ class FoldersController extends Controller
      */
     public function index(Request $request)
     {
-       $folders =Folder::query();
-       $folders= $folders->orderBy('id', 'desc')->paginate(15);
-       $data = [
-           'folders' => $folders,
-       ];
-       return view('admin.folders.index',$data);
+        $folders = Folder::query();
+        $folders = $folders->orderBy('id', 'desc')->paginate(15);
+        $data = [
+            'folders' => $folders,
+        ];
+
+        return view('admin.folders.index', $data);
     }
 
     /**
@@ -38,13 +38,13 @@ class FoldersController extends Controller
      */
     public function store(Request $request)
     {
-        $data=$request->all();
+        $data = $request->all();
         $data['created_at'] = date('Y-m-d H:i:s');
-        $folder =  Folder::create($data);
+        $folder = Folder::create($data);
         Session::flash('message', 'New folder created.');
+
         return redirect()->route('folders.index');
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -55,21 +55,23 @@ class FoldersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $folder =Folder::where('id', $id)->first();
+        $folder = Folder::where('id', $id)->first();
         $data = $request->all();
         $data['updated_at'] = date('Y-m-d H:i:s');
         $folder->update($data);
 
-        Session::flash('message', $folder->name." was Updated.");
+        Session::flash('message', $folder->name.' was Updated.');
+
         return redirect()->route('folders.index');
     }
 
     public function destroy($id)
     {
-        $folder =Folder::where('id', $id)->first();
+        $folder = Folder::where('id', $id)->first();
         $folder->delete();
 
-        Session::flash('message', $folder->name." was deleted.");
+        Session::flash('message', $folder->name.' was deleted.');
+
         return redirect()->route('folders.index');
     }
 }

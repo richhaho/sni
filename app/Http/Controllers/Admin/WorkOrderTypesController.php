@@ -17,12 +17,12 @@ class WorkOrderTypesController extends Controller
     public function index()
     {
         $types = WorkOrderType::All();
-        
+
         $data = [
-            'types' => $types
+            'types' => $types,
         ];
-                
-        return view('admin.workordertypes.index',$data);
+
+        return view('admin.workordertypes.index', $data);
     }
 
     /**
@@ -43,23 +43,24 @@ class WorkOrderTypesController extends Controller
      */
     public function store(Request $request)
     {
-         $this->validate($request, [
-        'name' => 'required',
+        $this->validate($request, [
+            'name' => 'required',
         ]);
-         
+
         $type = WorkOrderType::onlyTrashed()->where('slug', '=', str_slug($request->input('name')))->first();
         if ($type) {
             $type->restore();
         } else {
-             $this->validate($request, [
-            'name' => 'unique:work_order_types',
+            $this->validate($request, [
+                'name' => 'unique:work_order_types',
             ]);
             $type = new WorkOrderType();
             $type->slug = str_slug($request->input('name'));
             $type->name = $request->input('name');
             $type->save();
         }
-        Session::flash('message', 'Work Order Type ' . $type->name . ' successfully created.');
+        Session::flash('message', 'Work Order Type '.$type->name.' successfully created.');
+
         return redirect()->route('workordertypes.index');
     }
 
@@ -106,19 +107,19 @@ class WorkOrderTypesController extends Controller
     public function destroy($id)
     {
         $type = WorkOrderType::where('slug', '=', $id)->firstOrFail();
-      
+
         $temp_name = $type->name;
         $template = $type->template;
-        if($template) {
-            foreach($template->lines as $line) {
+        if ($template) {
+            foreach ($template->lines as $line) {
                 $line->delete();
             }
             $template->delete();
         }
         $type->delete();
-        
-         Session::flash('message', 'Work Order Type ' .$temp_name . ' successfully deleted.');
-        
+
+        Session::flash('message', 'Work Order Type '.$temp_name.' successfully deleted.');
+
         return redirect()->route('workordertypes.index');
     }
 }

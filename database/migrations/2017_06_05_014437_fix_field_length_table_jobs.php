@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class FixFieldLengthTableJobs extends Migration
 {
@@ -17,7 +17,7 @@ class FixFieldLengthTableJobs extends Migration
             $table->dropColumn('folio_number');
         });
         Schema::table('jobs', function (Blueprint $table) {
-            $table->string('folio_number',50)->nullable()->after('legal_description');
+            $table->string('folio_number', 50)->nullable()->after('legal_description');
         });
     }
 

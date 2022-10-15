@@ -43,6 +43,7 @@ use Laravel\Scout\Searchable;
  * @property-read mixed $search_string
  * @property-read \App\ContactInfo $linked
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\ContactInfo[] $links
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ContactInfo enable()
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ContactInfo hot()
@@ -82,153 +83,153 @@ class ContactInfo extends Model
 {
     use SoftDeletes;
     use Searchable;
-    
-    protected $fillable = ['first_name','last_name','gender', 'address_1','address_2','city','state','zip', 'country', 'phone', 'mobile','fax','email', 'source', 'source_date'];
-    protected $appends = ['full_name','full_address','name_entity_name','is_hot'];
-    
-    public function getFullNameAttribute() {
-        return trim($this->first_name . ' ' . $this->last_name);
-        
+
+    protected $fillable = ['first_name', 'last_name', 'gender', 'address_1', 'address_2', 'city', 'state', 'zip', 'country', 'phone', 'mobile', 'fax', 'email', 'source', 'source_date'];
+
+    protected $appends = ['full_name', 'full_address', 'name_entity_name', 'is_hot'];
+
+    public function getFullNameAttribute()
+    {
+        return trim($this->first_name.' '.$this->last_name);
     }
-    
-    public function getFullNameOrEntityAttribute() {
-        $xname = trim($this->first_name . ' ' . $this->last_name);
-        if(strlen($xname)== 0) {
+
+    public function getFullNameOrEntityAttribute()
+    {
+        $xname = trim($this->first_name.' '.$this->last_name);
+        if (strlen($xname) == 0) {
             return $this->entity->firm_name;
         } else {
-            return $xname ;
+            return $xname;
         }
     }
-    
-    
-      public function getIsHotAttribute() {
-         if ($this->entity) {
-            return $this->entity->client_id == 0 ? 1: 0;
-         } else {
-             return 0;
-         }
+
+    public function getIsHotAttribute()
+    {
+        if ($this->entity) {
+            return $this->entity->client_id == 0 ? 1 : 0;
+        } else {
+            return 0;
+        }
     }
-    
-    
-     public function getFullAddressAttribute() {
-         $lines = array();
-         $line2 = array();
-         if(strlen($this->address_1) > 0) {
+
+    public function getFullAddressAttribute()
+    {
+        $lines = [];
+        $line2 = [];
+        if (strlen($this->address_1) > 0) {
             $lines[] = $this->address_1;
-         }
-         if(strlen($this->address_2) > 0) {
+        }
+        if (strlen($this->address_2) > 0) {
             $lines[] = $this->address_2;
-         }
-         
-         if(strlen($this->city) > 0) {
-             $line2[] = $this->city;
-         }
-         if(strlen($this->state) > 0) {
-             $line2[] = $this->state;
-         }
-         if(strlen($this->zip) > 0) {
-             $line2[] = $this->zip;
-         }
-         $lines[] = implode(' ',$line2);
-         if(strlen($this->country) > 0) {
-            if (strtoupper($this->country) =='UNITED STATES') {
-                
-            }else {
+        }
+
+        if (strlen($this->city) > 0) {
+            $line2[] = $this->city;
+        }
+        if (strlen($this->state) > 0) {
+            $line2[] = $this->state;
+        }
+        if (strlen($this->zip) > 0) {
+            $line2[] = $this->zip;
+        }
+        $lines[] = implode(' ', $line2);
+        if (strlen($this->country) > 0) {
+            if (strtoupper($this->country) == 'UNITED STATES') {
+            } else {
                 $lines[] = $this->country;
             }
-         }   
-         $xaddress = implode('<br />',$lines);
-         
-        
+        }
+        $xaddress = implode('<br />', $lines);
+
         return trim($xaddress);
-        
     }
-    
-    
-     public function getAddressNoCountryAttribute() {
-         $lines = array();
-         $line2 = array();
-         if(strlen($this->address_1) > 0) {
+
+    public function getAddressNoCountryAttribute()
+    {
+        $lines = [];
+        $line2 = [];
+        if (strlen($this->address_1) > 0) {
             $lines[] = $this->address_1;
-         }
-         if(strlen($this->address_2) > 0) {
+        }
+        if (strlen($this->address_2) > 0) {
             $lines[] = $this->address_2;
-         }
-         
-         if(strlen($this->city) > 0) {
-             $line2[] = $this->city;
-         }
-         if(strlen($this->state) > 0) {
-             $line2[] = $this->state;
-         }
-         if(strlen($this->zip) > 0) {
-             $line2[] = $this->zip;
-         }
-         $lines[] = implode(' ',$line2);
-       
-         $xaddress = implode('<br />',$lines);
-         
-        
+        }
+
+        if (strlen($this->city) > 0) {
+            $line2[] = $this->city;
+        }
+        if (strlen($this->state) > 0) {
+            $line2[] = $this->state;
+        }
+        if (strlen($this->zip) > 0) {
+            $line2[] = $this->zip;
+        }
+        $lines[] = implode(' ', $line2);
+
+        $xaddress = implode('<br />', $lines);
+
         return trim($xaddress);
-        
     }
-    
-    
+
     public function scopeEnable($query)
     {
         return $query->where('status', 1);
     }
-    
-    public function getSearchStringAttribute() {
+
+    public function getSearchStringAttribute()
+    {
         return str_replace('<br />', ' - ', $this->full_address);
     }
-    
-    
-    public function getNameEntityNameAttribute() {
+
+    public function getNameEntityNameAttribute()
+    {
         if ($this->entity) {
-            if ($this->full_name == $this->entity->firm_name){
+            if ($this->full_name == $this->entity->firm_name) {
                 return trim($this->full_name);
             }
-            if (strlen($this->full_name)> 0) {
-                return trim($this->entity->firm_name . " (" . $this->full_name .  ")" );    
+            if (strlen($this->full_name) > 0) {
+                return trim($this->entity->firm_name.' ('.$this->full_name.')');
             } else {
                 return trim($this->entity->firm_name);
             }
         } else {
-             return trim($this->full_name);
+            return trim($this->full_name);
         }
     }
-    
-    public function entity() {
-         return $this->belongsTo('App\Entity')->withTrashed();
+
+    public function entity()
+    {
+        return $this->belongsTo(\App\Entity::class)->withTrashed();
     }
-    
+
     public static function scopeSearchByKeyword($query, $keyword)
     {
-        if ($keyword!='') {
+        if ($keyword != '') {
             $query->where(function ($query) use ($keyword) {
-                $query->where("first_name", "LIKE","%$keyword%")
-                    ->orWhere("last_name", "LIKE", "%$keyword%")
-                    ->orWhere("email", "LIKE", "%$keyword%")
-                    ->orWhere("address_1", "LIKE", "%$keyword%")
-                    ->orWhere("address_2", "LIKE", "%$keyword%")
-                    ->orWhere("state", "LIKE", "%$keyword%")
-                    ->orWhere("city", "LIKE", "%$keyword%")
-                    ->orWhere("country", "LIKE", "%$keyword%");
+                $query->where('first_name', 'LIKE', "%$keyword%")
+                    ->orWhere('last_name', 'LIKE', "%$keyword%")
+                    ->orWhere('email', 'LIKE', "%$keyword%")
+                    ->orWhere('address_1', 'LIKE', "%$keyword%")
+                    ->orWhere('address_2', 'LIKE', "%$keyword%")
+                    ->orWhere('state', 'LIKE', "%$keyword%")
+                    ->orWhere('city', 'LIKE', "%$keyword%")
+                    ->orWhere('country', 'LIKE', "%$keyword%");
             })->orWhereHas('entity', function ($q) use ($keyword) {
                 $q->where('firm_name', 'like', "%$keyword%");
             });
         }
+
         return $query;
     }
-    
-    public function scopeHot($query) {
-        return $query->whereHas('entity',function ($q) {
-            $q->where('client_id','=',0);
+
+    public function scopeHot($query)
+    {
+        return $query->whereHas('entity', function ($q) {
+            $q->where('client_id', '=', 0);
         });
     }
-    
-     public function toSearchableArray()
+
+    public function toSearchableArray()
     {
         $array = $this->toArray();
         unset($array['id']);
@@ -244,18 +245,17 @@ class ContactInfo extends Model
         unset($array['full_address']);
         unset($array['name_entity_name']);
         unset($array['entity']);
-        
+
         return $array;
     }
-    
+
     public function linked()
     {
-        return $this->belongsTo('App\ContactInfo', 'hot_id');
+        return $this->belongsTo(\App\ContactInfo::class, 'hot_id');
     }
 
     public function links()
     {
-        return $this->hasMany('App\ContactInfo', 'hot_id');
+        return $this->hasMany(\App\ContactInfo::class, 'hot_id');
     }
-    
 }

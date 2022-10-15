@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class IncreasePhonesLengthTableClients extends Migration
 {
@@ -19,10 +19,9 @@ class IncreasePhonesLengthTableClients extends Migration
             $table->dropColumn('fax');
         });
         Schema::table('clients', function (Blueprint $table) {
-            
-            $table->string('fax',30)->nullable()->after('country');
-            $table->string('mobile',30)->nullable()->after('country');
-            $table->string('phone',30)->nullable()->after('country');
+            $table->string('fax', 30)->nullable()->after('country');
+            $table->string('mobile', 30)->nullable()->after('country');
+            $table->string('phone', 30)->nullable()->after('country');
         });
     }
 
@@ -39,10 +38,9 @@ class IncreasePhonesLengthTableClients extends Migration
             $table->dropColumn('fax');
         });
         Schema::table('clients', function (Blueprint $table) {
-            
-            $table->string('fax',20)->nullable()->after('country');
-            $table->string('mobile',20)->nullable()->after('country');
-            $table->string('phone',20)->nullable()->after('country');
+            $table->string('fax', 20)->nullable()->after('country');
+            $table->string('mobile', 20)->nullable()->after('country');
+            $table->string('phone', 20)->nullable()->after('country');
         });
     }
 }

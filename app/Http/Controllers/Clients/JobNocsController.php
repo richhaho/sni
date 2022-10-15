@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers\Clients;
 
-
 use App\Http\Controllers\Controller;
-use Auth;
+use App\Job;
+use App\JobNoc;
 use Illuminate\Http\Request;
 use Response;
 use Session;
 use Storage;
-use App\Job;
-use App\JobNoc;
-use App\Client;
 
 class JobNocsController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,13 +23,13 @@ class JobNocsController extends Controller
      */
     public function index(Request $request)
     {
-       $nocs =JobNoc::query();
-       $nocs= $nocs->orderBy('recorded_at')->paginate(10);
-       $data = [
-           'nocs' => $nocs,
-       ];
-        
-       return view('client.jobs.nocs.index',$data);
+        $nocs = JobNoc::query();
+        $nocs = $nocs->orderBy('recorded_at')->paginate(10);
+        $data = [
+            'nocs' => $nocs,
+        ];
+
+        return view('client.jobs.nocs.index', $data);
     }
 
     /**
@@ -49,6 +46,7 @@ class JobNocsController extends Controller
         $noc = JobNoc::where('job_id', $job_id)->where('noc_number', $request->noc_number)->first();
         if ($noc) {
             Session::flash('message', 'This NOC# already exist.');
+
             return redirect()->to(url()->previous().'?#nocs');
         }
         $data = [
@@ -56,22 +54,24 @@ class JobNocsController extends Controller
             'noc_number' => $request->noc_number,
             'noc_notes' => $request->noc_notes,
             'recorded_at' => $request->recorded_at ? date('Y-m-d H:i:s', strtotime($request->recorded_at)) : date('Y-m-d H:i:s'),
-            'expired_at' => $request->expired_at ? date('Y-m-d H:i:s', strtotime($request->expired_at)) : date('Y-m-d H:i:s', strtotime('+1 year'))
+            'expired_at' => $request->expired_at ? date('Y-m-d H:i:s', strtotime($request->expired_at)) : date('Y-m-d H:i:s', strtotime('+1 year')),
         ];
-        $noc = JobNoc::create( $data);
-        if ($request['copy_noc']!=null && $request['copy_noc']!="" ) {
+        $noc = JobNoc::create($data);
+        if ($request['copy_noc'] != null && $request['copy_noc'] != '') {
             $f = $request->file('copy_noc');
-            if (!$this->checkFileSize($f)) {
+            if (! $this->checkFileSize($f)) {
                 Session::flash('message', 'This file is too large to upload.');
+
                 return redirect()->to(url()->previous().'?#nocs');
             }
-            $xfilename = $noc->id . "." . $f->guessExtension();
+            $xfilename = $noc->id.'.'.$f->guessExtension();
             $xpath = 'attachments/jobs/noc/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $noc->copy_noc = $xpath.$xfilename;
             $noc->save();
         }
         Session::flash('message', 'New NOC was created.');
+
         return redirect()->to(url()->previous().'?#nocs');
     }
 
@@ -91,6 +91,7 @@ class JobNocsController extends Controller
         $noc = JobNoc::where('id', '!=', $id)->where('job_id', $job_id)->where('noc_number', $request->noc_number)->first();
         if ($noc) {
             Session::flash('message', 'This NOC# already exist.');
+
             return redirect()->to(url()->previous().'?#nocs');
         }
 
@@ -98,25 +99,27 @@ class JobNocsController extends Controller
             'noc_number' => $request->noc_number,
             'noc_notes' => $request->noc_notes,
             'recorded_at' => $request->recorded_at ? date('Y-m-d H:i:s', strtotime($request->recorded_at)) : date('Y-m-d H:i:s'),
-            'expired_at' => $request->expired_at ? date('Y-m-d H:i:s', strtotime($request->expired_at)) : date('Y-m-d H:i:s', strtotime('+1 year'))
+            'expired_at' => $request->expired_at ? date('Y-m-d H:i:s', strtotime($request->expired_at)) : date('Y-m-d H:i:s', strtotime('+1 year')),
         ];
 
-        $noc=JobNoc::where('id',$id)->first();
+        $noc = JobNoc::where('id', $id)->first();
         $noc->update($data);
-        if ($request['copy_noc']!=null && $request['copy_noc']!="" ) {
+        if ($request['copy_noc'] != null && $request['copy_noc'] != '') {
             $f = $request->file('copy_noc');
-            if (!$this->checkFileSize($f)) {
+            if (! $this->checkFileSize($f)) {
                 Session::flash('message', 'This file is too large to upload.');
+
                 return redirect()->to(url()->previous().'?#nocs');
             }
-            $xfilename = $noc->id . "." . $f->guessExtension();
+            $xfilename = $noc->id.'.'.$f->guessExtension();
             $xpath = 'attachments/jobs/noc/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $noc->copy_noc = $xpath.$xfilename;
             $noc->save();
-        } 
+        }
         Session::flash('message', 'Job NOC was Updated.');
-        return redirect()->to(url()->previous().'?#nocs');       
+
+        return redirect()->to(url()->previous().'?#nocs');
     }
 
     /**
@@ -134,9 +137,10 @@ class JobNocsController extends Controller
             $job->save();
         }
         $noc->delete();
-    
+
         Session::flash('message', 'Job NOC was successfully deleted.');
-        return redirect()->to(url()->previous().'?#nocs');        
+
+        return redirect()->to(url()->previous().'?#nocs');
     }
 
     public function setCurrent($job_id, $id)
@@ -146,28 +150,31 @@ class JobNocsController extends Controller
         $job->noc_number = $noc->noc_number;
         $job->save();
         Session::flash('message', 'Current NOC was set for the job.');
-        return redirect()->to(url()->previous().'?#nocs');        
+
+        return redirect()->to(url()->previous().'?#nocs');
     }
 
     public function downloadNOC($job_id, $id)
     {
         $noc = JobNoc::findOrFail($id);
         $contents = Storage::get($noc->copy_noc);
-        $response = Response::make($contents, '200',[
+        $response = Response::make($contents, '200', [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="copy_of_noc.pdf"',
-            ]);
+        ]);
+
         return $response;
     }
 
-    public function checkFileSize($f) {
-        $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-        $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-         
-        if ($f->getSize()>$max_uploadfileSize){
+    public function checkFileSize($f)
+    {
+        $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+        $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+
+        if ($f->getSize() > $max_uploadfileSize) {
             return false;
         }
+
         return true;
     }
-
 }

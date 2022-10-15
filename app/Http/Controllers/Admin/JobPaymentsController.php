@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Session;
 use App\Job;
 use App\JobPaymentHistory;
 use Auth;
-use Storage;
+use Illuminate\Http\Request;
 use Response;
+use Session;
+use Storage;
 
 class JobPaymentsController extends Controller
 {
@@ -39,28 +39,30 @@ class JobPaymentsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$job_id)
+    public function store(Request $request, $job_id)
     {
         // $this->validate($request, [
         //     'payed_on' => 'required',
         //     'amount' => 'required|numeric',
         // ]);
 
-        if ($request['payed_on']==null || $request['payed_on']=="" || $request['amount']==null || $request['amount']=="" ) {
+        if ($request['payed_on'] == null || $request['payed_on'] == '' || $request['amount'] == null || $request['amount'] == '') {
             Session::flash('message', 'payed_on and amount are required.');
-            return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
+
+            return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
         }
 
         $f = $request->file('attached_file');
         if (isset($request['attached_file'])) {
-            $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-            $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-            if ($f->getSize()>$max_uploadfileSize){
+            $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+            $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+            if ($f->getSize() > $max_uploadfileSize) {
                 Session::flash('message', 'Attached file is too large to upload.');
-                return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
+
+                return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
             }
         }
-        
+
         $payment = new JobPaymentHistory;
         $payment->payed_on = date('Y-m-d', strtotime($request->payed_on));
         $payment->amount = $request->amount;
@@ -68,9 +70,9 @@ class JobPaymentsController extends Controller
         $payment->job_id = $job_id;
         $payment->save();
         if (isset($request['attached_file'])) {
-            $xfilename = $payment->id . "." . $f->guessExtension();
+            $xfilename = $payment->id.'.'.$f->guessExtension();
             $xpath = 'attachments/job_payments/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $payment->attached_file = $f->getClientOriginalName();
             $payment->file_mime = $f->getMimeType();
             $payment->file_path = $xpath.$xfilename;
@@ -78,8 +80,8 @@ class JobPaymentsController extends Controller
         }
 
         Session::flash('message', 'New Payment added');
-    
-        return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
+
+        return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 
     /**
@@ -99,11 +101,11 @@ class JobPaymentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($job_id,$id)
+    public function edit($job_id, $id)
     {
-       $payment = JobPaymentHistory::findOrFail($id);
-       return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments')->with('payment', $payment) : redirect()->to(route('jobs.edit',$job_id) .'?#payments')->with('payment', $payment);
-       
+        $payment = JobPaymentHistory::findOrFail($id);
+
+        return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments')->with('payment', $payment) : redirect()->to(route('jobs.edit', $job_id).'?#payments')->with('payment', $payment);
     }
 
     /**
@@ -115,21 +117,20 @@ class JobPaymentsController extends Controller
      */
     public function update(Request $request, $job_id, $id)
     {
-                
-       
-      $this->validate($request, [
+        $this->validate($request, [
             'payed_on' => 'required',
             'amount' => 'required|numeric',
         ]);
-        $job =Job::findOrFail($job_id);
+        $job = Job::findOrFail($job_id);
 
         $f = $request->file('attached_file');
         if (isset($request['attached_file'])) {
-            $max_uploadfileSize= min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
-            $max_uploadfileSize= substr($max_uploadfileSize, 0, -1)*1024*1024;
-            if ($f->getSize()>$max_uploadfileSize){
+            $max_uploadfileSize = min(ini_get('post_max_size'), ini_get('upload_max_filesize'));
+            $max_uploadfileSize = substr($max_uploadfileSize, 0, -1) * 1024 * 1024;
+            if ($f->getSize() > $max_uploadfileSize) {
                 Session::flash('message', 'Attached file is too large to upload.');
-                return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
+
+                return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
             }
         }
 
@@ -139,9 +140,9 @@ class JobPaymentsController extends Controller
         $payment->description = $request->input('description');
         $payment->save();
         if (isset($request['attached_file'])) {
-            $xfilename = $payment->id . "." . $f->guessExtension();
+            $xfilename = $payment->id.'.'.$f->guessExtension();
             $xpath = 'attachments/job_payments/';
-            $f->storeAs($xpath,$xfilename);
+            $f->storeAs($xpath, $xfilename);
             $payment->attached_file = $f->getClientOriginalName();
             $payment->file_mime = $f->getMimeType();
             $payment->file_path = $xpath.$xfilename;
@@ -149,9 +150,8 @@ class JobPaymentsController extends Controller
         }
 
         Session::flash('message', 'Payment Updated');
-       
-        return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
-       
+
+        return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 
     /**
@@ -160,21 +160,23 @@ class JobPaymentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($job_id,$id)
+    public function destroy($job_id, $id)
     {
         $payment = JobPaymentHistory::findOrFail($id);
         $payment->delete();
-        
-        return Auth::user()->restricted ? redirect()->to(route('research.edit',$job_id) .'?#payments') : redirect()->to(route('jobs.edit',$job_id) .'?#payments');
+
+        return Auth::user()->restricted ? redirect()->to(route('research.edit', $job_id).'?#payments') : redirect()->to(route('jobs.edit', $job_id).'?#payments');
     }
 
-    public function showattachment($id) {
+    public function showattachment($id)
+    {
         $payment = JobPaymentHistory::findOrFail($id);
         $contents = Storage::get($payment->file_path);
-        $response = Response::make($contents, '200',[
+        $response = Response::make($contents, '200', [
             'Content-Type' => $payment->file_mime,
-            'Content-Disposition' => 'attachment; filename="' . $payment->attached_file . '"',
-            ]);
+            'Content-Disposition' => 'attachment; filename="'.$payment->attached_file.'"',
+        ]);
+
         return $response;
     }
 }

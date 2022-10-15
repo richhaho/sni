@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers\Clients;
 
-
 use App\Http\Controllers\Controller;
-use Auth;
+use App\JobReminders;
 use Illuminate\Http\Request;
 use Response;
 use Session;
 use Storage;
-use App\JobReminders;
-use App\Client;
 
 class JobRemindersController extends Controller
 {
-     
-    public function __construct() {
-     
+    public function __construct()
+    {
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -25,13 +22,13 @@ class JobRemindersController extends Controller
      */
     public function index(Request $request)
     {
-       $reminders =JobReminders::query();
-       $reminders= $reminders->orderBy('sent_at')->paginate(10);
-       $data = [
-           'reminders' => $reminders,
-       ];
-        
-       return view('client.jobs.reminders.index',$data);
+        $reminders = JobReminders::query();
+        $reminders = $reminders->orderBy('sent_at')->paginate(10);
+        $data = [
+            'reminders' => $reminders,
+        ];
+
+        return view('client.jobs.reminders.index', $data);
     }
 
     /**
@@ -51,10 +48,11 @@ class JobRemindersController extends Controller
             'job_id' => $job_id,
             'emails' => $request->emails,
             'note' => $request->note,
-            'date' => new \DateTime($request->date)
+            'date' => new \DateTime($request->date),
         ];
-        JobReminders::create( $data);
+        JobReminders::create($data);
         Session::flash('message', 'New Reminder created.');
+
         return redirect()->to(url()->previous().'?#reminders');
     }
 
@@ -76,14 +74,15 @@ class JobRemindersController extends Controller
         $data = [
             'emails' => $request->emails,
             'note' => $request->note,
-            'date' => new \DateTime($request->date)
+            'date' => new \DateTime($request->date),
         ];
 
-        $reminder=JobReminders::where('id',$id)->first();
+        $reminder = JobReminders::where('id', $id)->first();
         $reminder->update($data);
- 
+
         Session::flash('message', 'Job reminder Updated.');
-        return redirect()->to(url()->previous().'?#reminders');       
+
+        return redirect()->to(url()->previous().'?#reminders');
     }
 
     /**
@@ -96,9 +95,9 @@ class JobRemindersController extends Controller
     {
         $reminder = JobReminders::findOrFail($id);
         $reminder->delete();
-    
+
         Session::flash('message', 'Job reminder successfully deleted.');
-        return redirect()->to(url()->previous().'?#reminders');        
+
+        return redirect()->to(url()->previous().'?#reminders');
     }
-    
 }
